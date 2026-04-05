@@ -133,7 +133,6 @@ export async function applyAuthChoiceQwenCNWeb(
     await setQwenCNWebCredentials({ cookie, xsrfToken, ut }, agentDir);
   }
 
-  const nextConfig = await applyQwenCNWebConfig(config);
-
+  const nextConfig = applyQwenCNWebConfig(config);
   return { config: nextConfig };
 }
