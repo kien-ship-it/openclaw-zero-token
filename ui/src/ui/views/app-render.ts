@@ -1,16 +1,16 @@
 import { html, nothing } from "lit";
-import { parseAgentSessionKey } from "../../../src/routing/session-key.js";
-import { t } from "../i18n/index.ts";
-import { refreshChatAvatar } from "./app-chat.ts";
-import { renderUsageTab } from "./app-render-usage-tab.ts";
-import { renderChatControls, renderTab, renderThemeToggle } from "./app-render.helpers.ts";
-import type { AppViewState } from "./app-view-state.ts";
-import { loadAgentFileContent, loadAgentFiles, saveAgentFile } from "./controllers/agent-files.ts";
-import { loadAgentIdentities, loadAgentIdentity } from "./controllers/agent-identity.ts";
-import { loadAgentSkills } from "./controllers/agent-skills.ts";
-import { loadAgents } from "./controllers/agents.ts";
-import { loadChannels } from "./controllers/channels.ts";
-import { loadChatHistory } from "./controllers/chat.ts";
+import { parseAgentSessionKey } from "../../../../src/routing/session-key.js";
+import { t } from "../../i18n/index.ts";
+import { refreshChatAvatar } from "../app-chat.ts";
+import { renderUsageTab } from "../app-render-usage-tab.ts";
+import { renderChatControls, renderTab, renderThemeToggle } from "../app-render.helpers.ts";
+import { loadAgentFileContent, loadAgentFiles, saveAgentFile } from "../controllers/agent-files.ts";
+import { loadAgentIdentities, loadAgentIdentity } from "../controllers/agent-identity.ts";
+import { loadAgentSkills } from "../controllers/agent-skills.ts";
+import { loadAgents } from "../controllers/agents.ts";
+import { loadAskOnceModels, executeAskOnceQuery } from "../controllers/askonce.ts";
+import { loadChannels } from "../controllers/channels.ts";
+import { loadChatHistory } from "../controllers/chat.ts";
 import {
   applyConfig,
   loadConfig,
@@ -18,7 +18,7 @@ import {
   saveConfig,
   updateConfigFormValue,
   removeConfigFormValue,
-} from "./controllers/config.ts";
+} from "../controllers/config.ts";
 import {
   loadCronRuns,
   toggleCronJob,
@@ -26,50 +26,50 @@ import {
   removeCronJob,
   addCronJob,
   normalizeCronFormState,
-} from "./controllers/cron.ts";
-import { loadDebug, callDebugMethod } from "./controllers/debug.ts";
+} from "../controllers/cron.ts";
+import { loadDebug, callDebugMethod } from "../controllers/debug.ts";
 import {
   approveDevicePairing,
   loadDevices,
   rejectDevicePairing,
   revokeDeviceToken,
   rotateDeviceToken,
-} from "./controllers/devices.ts";
+} from "../controllers/devices.ts";
 import {
   loadExecApprovals,
   removeExecApprovalsFormValue,
   saveExecApprovals,
   updateExecApprovalsFormValue,
-} from "./controllers/exec-approvals.ts";
-import { loadLogs } from "./controllers/logs.ts";
-import { loadNodes } from "./controllers/nodes.ts";
-import { loadPresence } from "./controllers/presence.ts";
-import { deleteSessionAndRefresh, loadSessions, patchSession } from "./controllers/sessions.ts";
+} from "../controllers/exec-approvals.ts";
+import { loadLogs } from "../controllers/logs.ts";
+import { loadNodes } from "../controllers/nodes.ts";
+import { loadPresence } from "../controllers/presence.ts";
+import { deleteSessionAndRefresh, loadSessions, patchSession } from "../controllers/sessions.ts";
 import {
   installSkill,
   loadSkills,
   saveSkillApiKey,
   updateSkillEdit,
   updateSkillEnabled,
-} from "./controllers/skills.ts";
-import { icons } from "./icons.ts";
+} from "../controllers/skills.ts";
+import { icons } from "../icons.ts";
+import { renderAgents } from "./agents.ts";
+import type { AppViewState } from "./app-view-state.ts";
+import { renderAskOnceView } from "./askonce.ts";
+import { renderChannels } from "./channels.ts";
+import { renderChat } from "./chat.ts";
+import { renderConfig } from "./config.ts";
+import { renderCron } from "./cron.ts";
+import { renderDebug } from "./debug.ts";
+import { renderExecApprovalPrompt } from "./exec-approval.ts";
+import { renderGatewayUrlConfirmation } from "./gateway-url-confirmation.ts";
+import { renderInstances } from "./instances.ts";
+import { renderLogs } from "./logs.ts";
 import { normalizeBasePath, TAB_GROUPS, subtitleForTab, titleForTab } from "./navigation.ts";
-import { renderAgents } from "./views/agents.ts";
-import { renderChannels } from "./views/channels.ts";
-import { renderChat } from "./views/chat.ts";
-import { renderConfig } from "./views/config.ts";
-import { renderCron } from "./views/cron.ts";
-import { renderDebug } from "./views/debug.ts";
-import { renderExecApprovalPrompt } from "./views/exec-approval.ts";
-import { renderGatewayUrlConfirmation } from "./views/gateway-url-confirmation.ts";
-import { renderInstances } from "./views/instances.ts";
-import { renderLogs } from "./views/logs.ts";
-import { renderNodes } from "./views/nodes.ts";
-import { renderOverview } from "./views/overview.ts";
-import { renderSessions } from "./views/sessions.ts";
-import { renderSkills } from "./views/skills.ts";
-import { renderAskOnceView } from "./views/askonce.ts";
-import { loadAskOnceModels, executeAskOnceQuery } from "./controllers/askonce.ts";
+import { renderNodes } from "./nodes.ts";
+import { renderOverview } from "./overview.ts";
+import { renderSessions } from "./sessions.ts";
+import { renderSkills } from "./skills.ts";
 
 const AVATAR_DATA_RE = /^data:/i;
 const AVATAR_HTTP_RE = /^https?:\/\//i;
@@ -897,7 +897,7 @@ export function renderApp(state: AppViewState) {
                   get models() {
                     return state.askonceModels;
                   },
-                  set models(v: import("./controllers/askonce.js").AskOnceModelInfo[]) {
+                  set models(v: import("../../controllers/askonce.ts").AskOnceModelInfo[]) {
                     state.askonceModels = v;
                   },
                   get modelsError() {
@@ -921,7 +921,9 @@ export function renderApp(state: AppViewState) {
                   get queryResult() {
                     return state.askonceQueryResult;
                   },
-                  set queryResult(v: import("./controllers/askonce.js").AskOnceQueryResult | null) {
+                  set queryResult(
+                    v: import("../../controllers/askonce.ts").AskOnceQueryResult | null,
+                  ) {
                     state.askonceQueryResult = v;
                   },
                   get queryError() {
@@ -959,7 +961,9 @@ export function renderApp(state: AppViewState) {
                   onToggleModel: (modelId) => {
                     const idx = state.askonceSelectedModels.indexOf(modelId);
                     if (idx >= 0) {
-                      state.askonceSelectedModels = state.askonceSelectedModels.filter((m) => m !== modelId);
+                      state.askonceSelectedModels = state.askonceSelectedModels.filter(
+                        (m) => m !== modelId,
+                      );
                     } else {
                       state.askonceSelectedModels = [...state.askonceSelectedModels, modelId];
                     }

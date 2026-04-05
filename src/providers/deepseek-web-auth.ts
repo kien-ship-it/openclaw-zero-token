@@ -39,7 +39,9 @@ export async function loginDeepseekWebAttachOnly(params: {
     let wsUrl: string | null = null;
     for (let i = 0; i < 10; i++) {
       wsUrl = await getChromeWebSocketUrl(cdpUrl, 2000);
-      if (wsUrl) break;
+      if (wsUrl) {
+        break;
+      }
       await new Promise((r) => setTimeout(r, 500));
     }
 
@@ -51,11 +53,13 @@ export async function loginDeepseekWebAttachOnly(params: {
     browser = await chromium.connectOverCDP(wsUrl, {
       headers: getHeadersWithAuth(wsUrl),
     });
-    context = browser.contexts()[0] || await browser.newContext();
+    context = browser.contexts()[0] || (await browser.newContext());
 
     // 查找是否已经有打开的 DeepSeek 页面
     const existingPages = context.pages();
-    let page = existingPages.find(p => p.url().includes('deepseek.com') || p.url().includes('chat.deepseek.com'));
+    let page = existingPages.find(
+      (p) => p.url().includes("deepseek.com") || p.url().includes("chat.deepseek.com"),
+    );
 
     if (!page) {
       // 没有 DeepSeek 页面，创建新页面
@@ -71,7 +75,10 @@ export async function loginDeepseekWebAttachOnly(params: {
     params.onProgress("Checking for existing DeepSeek session...");
 
     // Try to get cookies first (user might already be logged in)
-    const existingCookies = await context.cookies(["https://chat.deepseek.com", "https://deepseek.com"]);
+    const existingCookies = await context.cookies([
+      "https://chat.deepseek.com",
+      "https://deepseek.com",
+    ]);
     const cookieString = existingCookies.map((c) => `${c.name}=${c.value}`).join("; ");
 
     // Check for valid session indicators
@@ -83,7 +90,10 @@ export async function loginDeepseekWebAttachOnly(params: {
     let userAgent = await page.evaluate(() => navigator.userAgent);
 
     // If cookies exist and indicate logged in, capture them
-    if ((hasDeviceId || hasSessionId || hasSessionInfo || existingCookies.length > 3) && cookieString.length > 10) {
+    if (
+      (hasDeviceId || hasSessionId || hasSessionInfo || existingCookies.length > 3) &&
+      cookieString.length > 10
+    ) {
       params.onProgress("Found existing DeepSeek session!");
 
       // Try to capture bearer from page or requests
@@ -100,7 +110,9 @@ export async function loginDeepseekWebAttachOnly(params: {
           const data: Record<string, string> = {};
           for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key) data[key] = localStorage.getItem(key) || "";
+            if (key) {
+              data[key] = localStorage.getItem(key) || "";
+            }
           }
           return data;
         });
@@ -110,10 +122,15 @@ export async function loginDeepseekWebAttachOnly(params: {
           if (key.toLowerCase().includes("token") || key.toLowerCase().includes("auth")) {
             try {
               const parsed = JSON.parse(value);
-              if (parsed.token) bearer = parsed.token;
-              else if (typeof parsed === "string" && parsed.length > 20) bearer = parsed;
+              if (parsed.token) {
+                bearer = parsed.token;
+              } else if (typeof parsed === "string" && parsed.length > 20) {
+                bearer = parsed;
+              }
             } catch {
-              if (value.length > 20) bearer = value;
+              if (value.length > 20) {
+                bearer = value;
+              }
             }
           }
         }
@@ -125,9 +142,12 @@ export async function loginDeepseekWebAttachOnly(params: {
         // Try to get from API response by making a test request
         params.onProgress("Requesting DeepSeek API to capture token...");
         try {
-          const response = await page.request.get("https://chat.deepseek.com/api/v0/users/current", {
-            headers: { Cookie: cookieString }
-          });
+          const response = await page.request.get(
+            "https://chat.deepseek.com/api/v0/users/current",
+            {
+              headers: { Cookie: cookieString },
+            },
+          );
           if (response.ok()) {
             const data = await response.json();
             bearer = data?.data?.biz_data?.token || "";
@@ -164,17 +184,26 @@ export async function loginDeepseekWebAttachOnly(params: {
 
         const timeout = setTimeout(() => {
           if (!resolved) {
-            if (checkInterval) clearInterval(checkInterval);
+            if (checkInterval) {
+              clearInterval(checkInterval);
+            }
             reject(new Error("Login timed out (5 minutes)."));
           }
         }, 300000);
 
         const tryResolve = async () => {
-          if (!capturedBearer || resolved) return;
+          if (!capturedBearer || resolved) {
+            return;
+          }
 
           try {
-            const cookies = await context!.cookies(["https://chat.deepseek.com", "https://deepseek.com"]);
-            if (cookies.length === 0) return;
+            const cookies = await context!.cookies([
+              "https://chat.deepseek.com",
+              "https://deepseek.com",
+            ]);
+            if (cookies.length === 0) {
+              return;
+            }
 
             const cookieStr = cookies.map((c) => `${c.name}=${c.value}`).join("; ");
             const hasDId = cookieStr.includes("d_id=");
@@ -183,7 +212,9 @@ export async function loginDeepseekWebAttachOnly(params: {
             if (hasDId || hasSession || cookies.length > 3) {
               resolved = true;
               clearTimeout(timeout);
-              if (checkInterval) clearInterval(checkInterval);
+              if (checkInterval) {
+                clearInterval(checkInterval);
+              }
               console.log(`[DeepSeek Attach] Credentials captured`);
               resolve({ cookie: cookieStr, bearer: capturedBearer, userAgent });
             }
@@ -214,7 +245,9 @@ export async function loginDeepseekWebAttachOnly(params: {
               const bizData = body?.data as Record<string, unknown> | undefined;
               const token = (bizData?.biz_data as Record<string, unknown> | undefined)?.token;
               if (typeof token === "string" && token.length > 0) {
-                if (!capturedBearer) capturedBearer = token;
+                if (!capturedBearer) {
+                  capturedBearer = token;
+                }
                 await tryResolve();
               }
             } catch {}
@@ -269,8 +302,9 @@ export async function loginDeepseekWeb(params: {
   }
 
   try {
-    const cdpUrl =
-      browserConfig.attachOnly ? profile.cdpUrl : `http://127.0.0.1:${running.cdpPort}`;
+    const cdpUrl = browserConfig.attachOnly
+      ? profile.cdpUrl
+      : `http://127.0.0.1:${running.cdpPort}`;
     let wsUrl: string | null = null;
 
     // Retry finding the WS URL as Chrome might take a second to populate it
@@ -294,7 +328,9 @@ export async function loginDeepseekWeb(params: {
     const context = browser.contexts()[0] || (await browser.newContext());
     // 查找是否已经有打开的 DeepSeek 页面
     const existingPages = context.pages();
-    let page = existingPages.find(p => p.url().includes('deepseek.com') || p.url().includes('chat.deepseek.com'));
+    let page = existingPages.find(
+      (p) => p.url().includes("deepseek.com") || p.url().includes("chat.deepseek.com"),
+    );
 
     if (!page) {
       // 没有 DeepSeek 页面，创建新页面
@@ -308,13 +344,18 @@ export async function loginDeepseekWeb(params: {
 
     // 先检查是否已经登录
     params.onProgress("Checking for existing DeepSeek session...");
-    const existingCookies = await context.cookies(["https://chat.deepseek.com", "https://deepseek.com"]);
+    const existingCookies = await context.cookies([
+      "https://chat.deepseek.com",
+      "https://deepseek.com",
+    ]);
     const cookieString = existingCookies.map((c) => `${c.name}=${c.value}`).join("; ");
 
     const hasDeviceId = cookieString.includes("d_id=");
     const hasSessionId = cookieString.includes("ds_session_id=");
     const hasSessionInfo = cookieString.includes("HWSID=") || cookieString.includes("uuid=");
-    let hasValidSession = (hasDeviceId || hasSessionId || hasSessionInfo || existingCookies.length > 3) && cookieString.length > 10;
+    let hasValidSession =
+      (hasDeviceId || hasSessionId || hasSessionInfo || existingCookies.length > 3) &&
+      cookieString.length > 10;
 
     let bearer = "";
     let userAgent = await page.evaluate(() => navigator.userAgent);
@@ -339,7 +380,7 @@ export async function loginDeepseekWeb(params: {
           }
         }
       } catch (e) {
-        console.log(`[DeepSeek] Could not auto-capture token: ${e}`);
+        console.log(`[DeepSeek] Could not auto-capture token: ${String(e)}`);
       }
 
       // API 返回没有 token（可能过期），清除会话状态让用户重新登录
@@ -352,9 +393,13 @@ export async function loginDeepseekWeb(params: {
     userAgent = await page.evaluate(() => navigator.userAgent);
 
     if (hasValidSession) {
-      params.onProgress("Session detected but token expired. Please re-login in the browser window.");
+      params.onProgress(
+        "Session detected but token expired. Please re-login in the browser window.",
+      );
     } else {
-      params.onProgress("Please login to DeepSeek in the opened browser window. The session token will be captured automatically once you are logged in.");
+      params.onProgress(
+        "Please login to DeepSeek in the opened browser window. The session token will be captured automatically once you are logged in.",
+      );
     }
 
     return await new Promise<{ cookie: string; bearer: string; userAgent: string }>(
@@ -365,7 +410,9 @@ export async function loginDeepseekWeb(params: {
 
         const timeout = setTimeout(() => {
           if (!resolved) {
-            if (checkInterval) clearInterval(checkInterval);
+            if (checkInterval) {
+              clearInterval(checkInterval);
+            }
             reject(new Error("Login timed out (5 minutes)."));
           }
         }, 300000);
@@ -397,7 +444,9 @@ export async function loginDeepseekWeb(params: {
             if (hasDeviceId || hasSessionId || hasSessionInfo || cookies.length > 3) {
               resolved = true;
               clearTimeout(timeout);
-              if (checkInterval) clearInterval(checkInterval);
+              if (checkInterval) {
+                clearInterval(checkInterval);
+              }
               console.log(
                 `[DeepSeek] Credentials captured (d_id: ${hasDeviceId}, ds_session_id: ${hasSessionId})`,
               );
@@ -441,8 +490,8 @@ export async function loginDeepseekWeb(params: {
             try {
               const body = (await response.json()) as Record<string, unknown>;
               const bizData = body?.data as Record<string, unknown> | undefined;
-              const tokenFromResponse =
-                (bizData?.biz_data as Record<string, unknown> | undefined)?.token;
+              const tokenFromResponse = (bizData?.biz_data as Record<string, unknown> | undefined)
+                ?.token;
               if (typeof tokenFromResponse === "string" && tokenFromResponse.length > 0) {
                 if (!capturedBearer) {
                   console.log(`[DeepSeek] Captured token from users/current response`);
@@ -457,7 +506,9 @@ export async function loginDeepseekWeb(params: {
         });
 
         page.on("close", () => {
-          if (checkInterval) clearInterval(checkInterval);
+          if (checkInterval) {
+            clearInterval(checkInterval);
+          }
           reject(new Error("Browser window closed before login was captured."));
         });
 

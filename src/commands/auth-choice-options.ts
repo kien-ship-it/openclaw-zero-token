@@ -185,6 +185,12 @@ const AUTH_CHOICE_GROUP_DEFS: {
     hint: "Any OpenAI or Anthropic compatible endpoint",
     choices: ["custom-api-key"],
   },
+  {
+    value: "jh-web",
+    label: "JH Web (chat.ai.jh.edu)",
+    hint: "Johns Hopkins University AI portal",
+    choices: ["jh-web"],
+  },
 ];
 
 const PROVIDER_AUTH_CHOICE_OPTION_HINTS: Partial<Record<AuthChoice, string>> = {
@@ -298,6 +304,11 @@ const BASE_AUTH_CHOICE_OPTIONS: ReadonlyArray<AuthChoiceOption> = [
     hint: "Official fast tier",
   },
   { value: "custom-api-key", label: "Custom Provider" },
+  {
+    value: "jh-web",
+    label: "JH Web (chat.ai.jh.edu)",
+    hint: "Johns Hopkins University AI portal — requires browser login",
+  },
 ];
 
 export function formatAuthChoiceChoicesForCli(params?: {

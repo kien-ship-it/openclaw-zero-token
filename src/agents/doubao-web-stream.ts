@@ -136,7 +136,7 @@ export function createDoubaoWebStreamFn(cookieOrJson: string): StreamFn {
               } else if (Array.isArray(lastUserMessage.content)) {
                 prompt = lastUserMessage.content
                   .filter((part) => part.type === "text")
-                  .map((part) => (part as TextContent).text)
+                  .map((part) => part.text)
                   .join("");
               }
             }
@@ -426,8 +426,8 @@ export function createDoubaoWebStreamFn(cookieOrJson: string): StreamFn {
             const data = JSON.parse(dataStr);
 
             // Extract conversation ID
-            if (data.sessionId || data.sessionId) {
-              sessionMap.set(sessionKey, data.sessionId || data.sessionId);
+            if (data.sessionId) {
+              sessionMap.set(sessionKey, data.sessionId);
             }
 
             // Handle Doubao's event-based response format
@@ -445,8 +445,16 @@ export function createDoubaoWebStreamFn(cookieOrJson: string): StreamFn {
             } else if (data.event_data) {
               // Try to parse event_data for content
               try {
-                const eventData = typeof data.event_data === "string" ? JSON.parse(data.event_data) : data.event_data;
-                delta = eventData.text || eventData.content || eventData.delta || eventData.message?.content || "";
+                const eventData =
+                  typeof data.event_data === "string"
+                    ? JSON.parse(data.event_data)
+                    : data.event_data;
+                delta =
+                  eventData.text ||
+                  eventData.content ||
+                  eventData.delta ||
+                  eventData.message?.content ||
+                  "";
               } catch {
                 // event_data is not JSON
               }
@@ -454,11 +462,7 @@ export function createDoubaoWebStreamFn(cookieOrJson: string): StreamFn {
 
             // Also try standard format
             if (!delta) {
-              delta =
-                data.choices?.[0]?.delta?.content ??
-                data.text ??
-                data.content ??
-                data.delta;
+              delta = data.choices?.[0]?.delta?.content ?? data.text ?? data.content ?? data.delta;
             }
 
             if (typeof delta === "string" && delta) {
@@ -499,7 +503,9 @@ export function createDoubaoWebStreamFn(cookieOrJson: string): StreamFn {
           emitDelta(mode, tagBuffer);
         }
 
-        console.log(`[DoubaoWebStream] Stream completed. Parts: ${contentParts.length}, Tools: ${accumulatedToolCalls.length}`);
+        console.log(
+          `[DoubaoWebStream] Stream completed. Parts: ${contentParts.length}, Tools: ${accumulatedToolCalls.length}`,
+        );
 
         stream.push({
           type: "done",
@@ -529,7 +535,7 @@ export function createDoubaoWebStreamFn(cookieOrJson: string): StreamFn {
             },
             timestamp: Date.now(),
           },
-        } as any);
+        } as unknown);
       } finally {
         stream.end();
       }

@@ -43,7 +43,10 @@ function generateSign(): { timestamp: string; nonce: string; sign: string } {
   const a = i % 10;
   const timestamp = A.substring(0, t - 2) + a + A.substring(t - 1, t);
   const nonce = crypto.randomUUID().replace(/-/g, "");
-  const sign = crypto.createHash("md5").update(`${timestamp}-${nonce}-${SIGN_SECRET}`).digest("hex");
+  const sign = crypto
+    .createHash("md5")
+    .update(`${timestamp}-${nonce}-${SIGN_SECRET}`)
+    .digest("hex");
   return { timestamp, nonce, sign };
 }
 
@@ -106,7 +109,9 @@ export class ZWebClientBrowser {
       console.log(`[Z Web Browser] Connecting to existing Chrome at ${profile.cdpUrl}`);
       for (let i = 0; i < 10; i++) {
         wsUrl = await getChromeWebSocketUrl(profile.cdpUrl, 2000);
-        if (wsUrl) break;
+        if (wsUrl) {
+          break;
+        }
         await new Promise((r) => setTimeout(r, 500));
       }
       if (!wsUrl) {
@@ -120,7 +125,9 @@ export class ZWebClientBrowser {
       const cdpUrl = `http://127.0.0.1:${running.cdpPort}`;
       for (let i = 0; i < 10; i++) {
         wsUrl = await getChromeWebSocketUrl(cdpUrl, 2000);
-        if (wsUrl) break;
+        if (wsUrl) {
+          break;
+        }
         await new Promise((r) => setTimeout(r, 500));
       }
       if (!wsUrl) {
@@ -197,7 +204,7 @@ export class ZWebClientBrowser {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${refreshToken}`,
+              Authorization: `Bearer ${refreshToken}`,
               "App-Name": "chatglm",
               "X-App-Platform": "pc",
               "X-App-Version": "0.0.1",
@@ -216,9 +223,14 @@ export class ZWebClientBrowser {
           }
 
           const data = await res.json();
-          const accessToken = data?.result?.access_token ?? data?.result?.accessToken ?? data?.accessToken;
+          const accessToken =
+            data?.result?.access_token ?? data?.result?.accessToken ?? data?.accessToken;
           if (!accessToken) {
-            return { ok: false, status: 200, error: `No accessToken in response: ${JSON.stringify(data).substring(0, 300)}` };
+            return {
+              ok: false,
+              status: 200,
+              error: `No accessToken in response: ${JSON.stringify(data).substring(0, 300)}`,
+            };
           }
           return { ok: true, accessToken };
         } catch (err) {
@@ -292,9 +304,9 @@ export class ZWebClientBrowser {
 
           const headers: Record<string, string> = {
             "Content-Type": "application/json",
-            "Accept": "text/event-stream",
+            Accept: "text/event-stream",
             "App-Name": "chatglm",
-            "Origin": "https://chatglm.cn",
+            Origin: "https://chatglm.cn",
             "X-App-Platform": "pc",
             "X-App-Version": "0.0.1",
             "X-App-fr": "default",
@@ -312,16 +324,13 @@ export class ZWebClientBrowser {
             headers["Authorization"] = `Bearer ${accessToken}`;
           }
 
-          const res = await fetch(
-            "https://chatglm.cn/chatglm/backend-api/assistant/stream",
-            {
-              method: "POST",
-              headers,
-              credentials: "include",
-              body: bodyStr,
-              signal: controller.signal,
-            },
-          );
+          const res = await fetch("https://chatglm.cn/chatglm/backend-api/assistant/stream", {
+            method: "POST",
+            headers,
+            credentials: "include",
+            body: bodyStr,
+            signal: controller.signal,
+          });
 
           clearTimeout(timer);
 
@@ -341,7 +350,9 @@ export class ZWebClientBrowser {
 
           while (true) {
             const { done, value } = await reader.read();
-            if (done) break;
+            if (done) {
+              break;
+            }
             const chunk = decoder.decode(value, { stream: true });
             fullText += chunk;
             chunkCount++;
@@ -349,10 +360,16 @@ export class ZWebClientBrowser {
 
           return { ok: true, data: fullText, chunkCount };
         } catch (err) {
-          if (timer) clearTimeout(timer);
+          if (timer) {
+            clearTimeout(timer);
+          }
           const msg = String(err);
           if (msg.includes("aborted") || msg.includes("signal")) {
-            return { ok: false, status: 408, error: `ChatGLM API request timed out after ${timeoutMs}ms` };
+            return {
+              ok: false,
+              status: 408,
+              error: `ChatGLM API request timed out after ${timeoutMs}ms`,
+            };
           }
           return { ok: false, status: 500, error: msg };
         }
@@ -373,7 +390,12 @@ export class ZWebClientBrowser {
       evalPromise,
       new Promise<never>((_, reject) =>
         setTimeout(
-          () => reject(new Error(`[Z Web Browser] page.evaluate timed out after ${externalTimeoutMs / 1000}s`)),
+          () =>
+            reject(
+              new Error(
+                `[Z Web Browser] page.evaluate timed out after ${externalTimeoutMs / 1000}s`,
+              ),
+            ),
           externalTimeoutMs,
         ),
       ),
@@ -390,7 +412,9 @@ export class ZWebClientBrowser {
       );
     }
 
-    console.log(`[Z Web Browser] Response: ${responseData.chunkCount} chunks, ${responseData.data?.length || 0} bytes`);
+    console.log(
+      `[Z Web Browser] Response: ${responseData.chunkCount} chunks, ${responseData.data?.length || 0} bytes`,
+    );
 
     const encoder = new TextEncoder();
     return new ReadableStream({

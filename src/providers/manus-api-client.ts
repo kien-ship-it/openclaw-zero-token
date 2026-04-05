@@ -42,7 +42,7 @@ export class ManusApiClient {
 
   private async request<T>(
     path: string,
-    options: { method?: string; body?: unknown } = {}
+    options: { method?: string; body?: unknown } = {},
   ): Promise<T> {
     const res = await fetch(`${MANUS_API_BASE}${path}`, {
       method: options.method || "GET",
@@ -77,7 +77,9 @@ export class ManusApiClient {
       agentProfile: params.agentProfile || "manus-1.6",
       taskMode: params.taskMode || "chat",
     };
-    if (params.taskId) body.taskId = params.taskId;
+    if (params.taskId) {
+      body.taskId = params.taskId;
+    }
 
     return this.request<CreateTaskResponse>("/v1/tasks", {
       method: "POST",

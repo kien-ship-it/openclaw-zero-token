@@ -1,6 +1,6 @@
 import { LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { i18n, I18nController, isSupportedLocale } from "../i18n/index.ts";
+import { i18n, I18nController, isSupportedLocale } from "../../i18n/index.ts";
 import {
   handleChannelConfigReload as handleChannelConfigReloadInternal,
   handleChannelConfigSave as handleChannelConfigSaveInternal,
@@ -13,29 +13,29 @@ import {
   handleWhatsAppLogout as handleWhatsAppLogoutInternal,
   handleWhatsAppStart as handleWhatsAppStartInternal,
   handleWhatsAppWait as handleWhatsAppWaitInternal,
-} from "./app-channels.ts";
+} from "../app-channels.ts";
 import {
   handleAbortChat as handleAbortChatInternal,
   handleSendChat as handleSendChatInternal,
   removeQueuedMessage as removeQueuedMessageInternal,
-} from "./app-chat.ts";
-import { DEFAULT_CRON_FORM, DEFAULT_LOG_LEVEL_FILTERS } from "./app-defaults.ts";
-import type { EventLogEntry } from "./app-events.ts";
-import { connectGateway as connectGatewayInternal } from "./app-gateway.ts";
+} from "../app-chat.ts";
+import { DEFAULT_CRON_FORM, DEFAULT_LOG_LEVEL_FILTERS } from "../app-defaults.ts";
+import type { EventLogEntry } from "../app-events.ts";
+import { connectGateway as connectGatewayInternal } from "../app-gateway.ts";
 import {
   handleConnected,
   handleDisconnected,
   handleFirstUpdated,
   handleUpdated,
-} from "./app-lifecycle.ts";
-import { renderApp } from "./app-render.ts";
+} from "../app-lifecycle.ts";
+import { renderApp } from "../app-render.ts";
 import {
   exportLogs as exportLogsInternal,
   handleChatScroll as handleChatScrollInternal,
   handleLogsScroll as handleLogsScrollInternal,
   resetChatScroll as resetChatScrollInternal,
   scheduleChatScroll as scheduleChatScrollInternal,
-} from "./app-scroll.ts";
+} from "../app-scroll.ts";
 import {
   applySettings as applySettingsInternal,
   loadCron as loadCronInternal,
@@ -43,23 +43,22 @@ import {
   setTab as setTabInternal,
   setTheme as setThemeInternal,
   onPopState as onPopStateInternal,
-} from "./app-settings.ts";
+} from "../app-settings.ts";
 import {
   resetToolStream as resetToolStreamInternal,
   type ToolStreamEntry,
   type CompactionStatus,
-} from "./app-tool-stream.ts";
-import type { AppViewState } from "./app-view-state.ts";
-import { normalizeAssistantIdentity } from "./assistant-identity.ts";
-import { loadAssistantIdentity as loadAssistantIdentityInternal } from "./controllers/assistant-identity.ts";
-import type { DevicePairingList } from "./controllers/devices.ts";
-import type { ExecApprovalRequest } from "./controllers/exec-approval.ts";
-import type { ExecApprovalsFile, ExecApprovalsSnapshot } from "./controllers/exec-approvals.ts";
-import type { SkillMessage } from "./controllers/skills.ts";
-import type { GatewayBrowserClient, GatewayHelloOk } from "./gateway.ts";
-import type { Tab } from "./navigation.ts";
-import { loadSettings, type UiSettings } from "./storage.ts";
-import type { ResolvedTheme, ThemeMode } from "./theme.ts";
+} from "../app-tool-stream.ts";
+import type { AppViewState } from "../app-view-state.ts";
+import { normalizeAssistantIdentity } from "../assistant-identity.ts";
+import { loadAssistantIdentity as loadAssistantIdentityInternal } from "../controllers/assistant-identity.ts";
+import type { DevicePairingList } from "../controllers/devices.ts";
+import type { ExecApprovalRequest } from "../controllers/exec-approval.ts";
+import type { ExecApprovalsFile, ExecApprovalsSnapshot } from "../controllers/exec-approvals.ts";
+import type { SkillMessage } from "../controllers/skills.ts";
+import type { GatewayBrowserClient, GatewayHelloOk } from "../gateway.ts";
+import { loadSettings, type UiSettings } from "../storage.ts";
+import type { ResolvedTheme, ThemeMode } from "../theme.ts";
 import type {
   AgentsListResult,
   AgentsFilesListResult,
@@ -78,9 +77,10 @@ import type {
   SkillStatusReport,
   StatusSummary,
   NostrProfile,
-} from "./types.ts";
-import { type ChatAttachment, type ChatQueueItem, type CronFormState } from "./ui-types.ts";
-import type { NostrProfileFormState } from "./views/channels.nostr-profile-form.ts";
+} from "../types.ts";
+import { type ChatAttachment, type ChatQueueItem, type CronFormState } from "../ui-types.ts";
+import type { NostrProfileFormState } from "./channels.nostr-profile-form.ts";
+import type { Tab } from "./navigation.ts";
 
 declare global {
   interface Window {
@@ -237,8 +237,8 @@ export class OpenClawApp extends LitElement {
   @state() accessor sessionsIncludeUnknown = false;
 
   @state() accessor usageLoading = false;
-  @state() accessor usageResult: import("./types.js").SessionsUsageResult | null = null;
-  @state() accessor usageCostSummary: import("./types.js").CostUsageSummary | null = null;
+  @state() accessor usageResult: import("../types.ts").SessionsUsageResult | null = null;
+  @state() accessor usageCostSummary: import("../types.ts").CostUsageSummary | null = null;
   @state() accessor usageError: string | null = null;
   @state() accessor usageStartDate = (() => {
     const d = new Date();
@@ -255,18 +255,19 @@ export class OpenClawApp extends LitElement {
   @state() accessor usageDailyChartMode: "total" | "by-type" = "by-type";
   @state() accessor usageTimeSeriesMode: "cumulative" | "per-turn" = "per-turn";
   @state() accessor usageTimeSeriesBreakdownMode: "total" | "by-type" = "by-type";
-  @state() accessor usageTimeSeries: import("./types.js").SessionUsageTimeSeries | null = null;
+  @state() accessor usageTimeSeries: import("../types.ts").SessionUsageTimeSeries | null = null;
   @state() accessor usageTimeSeriesLoading = false;
   @state() accessor usageTimeSeriesCursorStart: number | null = null;
   @state() accessor usageTimeSeriesCursorEnd: number | null = null;
-  @state() accessor usageSessionLogs: import("./views/usage.js").SessionLogEntry[] | null = null;
+  @state() accessor usageSessionLogs: import("./usage.ts").SessionLogEntry[] | null = null;
   @state() accessor usageSessionLogsLoading = false;
   @state() accessor usageSessionLogsExpanded = false;
   // Applied query (used to filter the already-loaded sessions list client-side).
   @state() accessor usageQuery = "";
   // Draft query text (updates immediately as the user types; applied via debounce or "Search").
   @state() accessor usageQueryDraft = "";
-  @state() accessor usageSessionSort: "tokens" | "cost" | "recent" | "messages" | "errors" = "recent";
+  @state() accessor usageSessionSort: "tokens" | "cost" | "recent" | "messages" | "errors" =
+    "recent";
   @state() accessor usageSessionSortDir: "desc" | "asc" = "desc";
   @state() accessor usageRecentSessions: string[] = [];
   @state() accessor usageTimeZone: "local" | "utc" = "local";
@@ -283,7 +284,7 @@ export class OpenClawApp extends LitElement {
     "errors",
     "duration",
   ];
-  @state() accessor usageLogFilterRoles: import("./views/usage.js").SessionLogRole[] = [];
+  @state() accessor usageLogFilterRoles: import("./usage.ts").SessionLogRole[] = [];
   @state() accessor usageLogFilterTools: string[] = [];
   @state() accessor usageLogFilterHasTools = false;
   @state() accessor usageLogFilterQuery = "";
@@ -300,7 +301,7 @@ export class OpenClawApp extends LitElement {
   @state() accessor cronRuns: CronRunLogEntry[] = [];
   @state() accessor cronBusy = false;
 
-  @state() accessor updateAvailable: import("./types.js").UpdateAvailable | null = null;
+  @state() accessor updateAvailable: import("../types.ts").UpdateAvailable | null = null;
 
   @state() accessor skillsLoading = false;
   @state() accessor skillsReport: SkillStatusReport | null = null;
@@ -338,11 +339,13 @@ export class OpenClawApp extends LitElement {
 
   // AskOnce state
   @state() accessor askonceModelsLoading = false;
-  @state() accessor askonceModels: import("./controllers/askonce.js").AskOnceModelInfo[] = [];
+  @state() accessor askonceModels: import("../controllers/askonce.ts").AskOnceModelInfo[] = [];
   @state() accessor askonceModelsError: string | null = null;
   @state() accessor askonceQueryLoading = false;
   @state() accessor askonceQueryQuestion = "";
-  @state() accessor askonceQueryResult: import("./controllers/askonce.js").AskOnceQueryResult | null = null;
+  @state() accessor askonceQueryResult:
+    | import("../controllers/askonce.ts").AskOnceQueryResult
+    | null = null;
   @state() accessor askonceQueryError: string | null = null;
   @state() accessor askonceSelectedModels: string[] = [];
 

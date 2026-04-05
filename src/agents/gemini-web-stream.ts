@@ -18,7 +18,9 @@ function stripForWebProvider(prompt: string): string {
 
 // Helper to build XML tool prompt section
 function buildXmlToolPromptSection(tools: unknown[]): string {
-  if (!tools || tools.length === 0) return "";
+  if (!tools || tools.length === 0) {
+    return "";
+  }
   return "\n## Tool Use Instructions\n";
 }
 
@@ -84,9 +86,9 @@ export function createGeminiWebStreamFn(cookieOrJson: string): StreamFn {
               } else if (Array.isArray(m.content)) {
                 for (const part of m.content) {
                   if (part.type === "text") {
-                    content += (part as TextContent).text;
+                    content += part.text;
                   } else if (part.type === "toolCall") {
-                    const tc = part as ToolCall;
+                    const tc = part;
                     content += `<tool_call id="${tc.id}" name="${tc.name}">${JSON.stringify(tc.arguments)}</tool_call>`;
                   }
                 }
@@ -156,7 +158,9 @@ export function createGeminiWebStreamFn(cookieOrJson: string): StreamFn {
 
         console.log(`[GeminiWebStream] Starting run for session: ${sessionKey}`);
         console.log(`[GeminiWebStream] Conversation ID: ${conversationId || "new"}`);
-        console.log(`[GeminiWebStream] Tools: ${tools.length}, prompt length: ${cleanPrompt.length}`);
+        console.log(
+          `[GeminiWebStream] Tools: ${tools.length}, prompt length: ${cleanPrompt.length}`,
+        );
 
         const responseStream = await client.chatCompletions({
           conversationId,
@@ -174,7 +178,12 @@ export function createGeminiWebStreamFn(cookieOrJson: string): StreamFn {
         let buffer = "";
 
         const contentParts: (TextContent | ToolCall)[] = [];
-        const accumulatedToolCalls: { id: string; name: string; arguments: string; index: number }[] = [];
+        const accumulatedToolCalls: {
+          id: string;
+          name: string;
+          arguments: string;
+          index: number;
+        }[] = [];
         const indexMap = new Map<string, number>();
         let nextIndex = 0;
         let currentMode: "text" | "toolcall" = "text";
@@ -407,8 +416,7 @@ export function createGeminiWebStreamFn(cookieOrJson: string): StreamFn {
         const stopReason = accumulatedToolCalls.length > 0 ? "toolUse" : "stop";
         const assistantMessage: AssistantMessage = {
           role: "assistant",
-          content:
-            contentParts.length > 0 ? contentParts : [{ type: "text", text: "" }],
+          content: contentParts.length > 0 ? contentParts : [{ type: "text", text: "" }],
           stopReason,
           api: model.api,
           provider: model.provider,
@@ -452,7 +460,7 @@ export function createGeminiWebStreamFn(cookieOrJson: string): StreamFn {
             },
             timestamp: Date.now(),
           },
-        } as any);
+        } as unknown);
       } finally {
         stream.end();
       }

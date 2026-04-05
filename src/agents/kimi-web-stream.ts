@@ -136,7 +136,7 @@ export function createKimiWebStreamFn(cookieOrJson: string): StreamFn {
               } else if (Array.isArray(lastUserMessage.content)) {
                 prompt = lastUserMessage.content
                   .filter((part) => part.type === "text")
-                  .map((part) => (part as TextContent).text)
+                  .map((part) => part.text)
                   .join("");
               }
             }
@@ -433,10 +433,7 @@ export function createKimiWebStreamFn(cookieOrJson: string): StreamFn {
 
             // Extract content delta - Qwen v2 uses choices[0].delta.content
             const delta =
-              data.choices?.[0]?.delta?.content ??
-              data.text ??
-              data.content ??
-              data.delta;
+              data.choices?.[0]?.delta?.content ?? data.text ?? data.content ?? data.delta;
             if (typeof delta === "string" && delta) {
               pushDelta(delta);
             }
@@ -475,7 +472,9 @@ export function createKimiWebStreamFn(cookieOrJson: string): StreamFn {
           emitDelta(mode, tagBuffer);
         }
 
-        console.log(`[KimiWebStream] Stream completed. Parts: ${contentParts.length}, Tools: ${accumulatedToolCalls.length}`);
+        console.log(
+          `[KimiWebStream] Stream completed. Parts: ${contentParts.length}, Tools: ${accumulatedToolCalls.length}`,
+        );
 
         stream.push({
           type: "done",
@@ -505,7 +504,7 @@ export function createKimiWebStreamFn(cookieOrJson: string): StreamFn {
             },
             timestamp: Date.now(),
           },
-        } as any);
+        } as unknown);
       } finally {
         stream.end();
       }

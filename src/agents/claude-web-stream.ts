@@ -136,7 +136,7 @@ export function createClaudeWebStreamFn(cookieOrJson: string): StreamFn {
               } else if (Array.isArray(lastUserMessage.content)) {
                 prompt = lastUserMessage.content
                   .filter((part) => part.type === "text")
-                  .map((part) => (part as TextContent).text)
+                  .map((part) => part.text)
                   .join("");
               }
             }
@@ -435,10 +435,7 @@ export function createClaudeWebStreamFn(cookieOrJson: string): StreamFn {
             // - Qwen-style: choices[0].delta.content / text / content / delta
             // - Claude Web SSE: type === "content_block_delta" with delta.text
             let delta: unknown =
-              data.choices?.[0]?.delta?.content ??
-              data.text ??
-              data.content ??
-              data.delta;
+              data.choices?.[0]?.delta?.content ?? data.text ?? data.content ?? data.delta;
 
             if (
               (!delta || typeof delta !== "string") &&
@@ -487,7 +484,9 @@ export function createClaudeWebStreamFn(cookieOrJson: string): StreamFn {
           emitDelta(mode, tagBuffer);
         }
 
-        console.log(`[ClaudeWebStream] Stream completed. Parts: ${contentParts.length}, Tools: ${accumulatedToolCalls.length}`);
+        console.log(
+          `[ClaudeWebStream] Stream completed. Parts: ${contentParts.length}, Tools: ${accumulatedToolCalls.length}`,
+        );
 
         stream.push({
           type: "done",
@@ -517,7 +516,7 @@ export function createClaudeWebStreamFn(cookieOrJson: string): StreamFn {
             },
             timestamp: Date.now(),
           },
-        } as any);
+        } as unknown);
       } finally {
         stream.end();
       }

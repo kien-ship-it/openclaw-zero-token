@@ -290,3 +290,202 @@ describe("JH SSE parser – edge cases", () => {
     expect(collectDeltas(parseJhSseLines(lines))).toEqual([]);
   });
 });
+
+// ── XML tool_call / think tag parser tests ──────────────────────────────────
+//
+// The production jh-web-stream pushDelta logic buffers incoming text and scans
+// for <tool_call ...>...</tool_call> and <think>...</think> XML tags.  We
+// replicate the core parsing here to validate extraction.
+
+interface TagParserEvent {
+  type: "text" | "thinking" | "toolcall_start" | "toolcall_delta" | "toolcall_end";
+  content?: string;
+  toolName?: string;
+  toolId?: string;
+  parsedArgs?: Record<string, unknown>;
+}
+
+/**
+ * Minimal standalone reimplementation of the pushDelta/checkTags logic from
+ * jh-web-stream.ts for white-box testing.
+ */
+function parseTagsFromText(input: string): TagParserEvent[] {
+  const events: TagParserEvent[] = [];
+  let currentMode: "text" | "thinking" | "tool_call" = "text";
+  let currentToolName = "";
+  let currentToolArgs = "";
+  let currentToolId = "";
+  let tagBuffer = "";
+
+  const flush = (mode: "text" | "thinking" | "tool_call", content: string) => {
+    if (!content) {
+      return;
+    }
+    if (mode === "text") {
+      events.push({ type: "text", content });
+    } else if (mode === "thinking") {
+      events.push({ type: "thinking", content });
+    } else if (mode === "tool_call") {
+      currentToolArgs += content;
+      events.push({ type: "toolcall_delta", content });
+    }
+  };
+
+  const checkTags = () => {
+    const thinkStart = tagBuffer.match(/<think\b[^<>]*>/i);
+    const thinkEnd = tagBuffer.match(/<\/think\b[^<>]*>/i);
+    const toolCallStart = tagBuffer.match(
+      /<tool_call\s*(?:id=['"]?([^'"]+)['"]?\s*)?name=['"]?([^'"]+)['"]?\s*>/i,
+    );
+    const toolCallEnd = tagBuffer.match(/<\/tool_call\s*>/i);
+
+    const indices = [
+      {
+        type: "think_start" as const,
+        idx: thinkStart?.index ?? -1,
+        len: thinkStart?.[0].length ?? 0,
+      },
+      { type: "think_end" as const, idx: thinkEnd?.index ?? -1, len: thinkEnd?.[0].length ?? 0 },
+      {
+        type: "tool_start" as const,
+        idx: toolCallStart?.index ?? -1,
+        len: toolCallStart?.[0].length ?? 0,
+        id: toolCallStart?.[1],
+        name: toolCallStart?.[2],
+      },
+      {
+        type: "tool_end" as const,
+        idx: toolCallEnd?.index ?? -1,
+        len: toolCallEnd?.[0].length ?? 0,
+      },
+    ]
+      .filter((t) => t.idx !== -1)
+      .toSorted((a, b) => a.idx - b.idx);
+
+    if (indices.length > 0) {
+      const first = indices[0];
+      const before = tagBuffer.slice(0, first.idx);
+      if (before) {
+        flush(currentMode, before);
+      }
+
+      if (first.type === "think_start") {
+        currentMode = "thinking";
+      } else if (first.type === "think_end") {
+        currentMode = "text";
+      } else if (first.type === "tool_start") {
+        currentMode = "tool_call";
+        currentToolName = (first as { name?: string }).name ?? "";
+        currentToolId = (first as { id?: string }).id ?? `auto_${Date.now()}`;
+        currentToolArgs = "";
+        events.push({ type: "toolcall_start", toolName: currentToolName, toolId: currentToolId });
+      } else if (first.type === "tool_end") {
+        let parsed: Record<string, unknown> = {};
+        try {
+          parsed = JSON.parse(currentToolArgs.trim());
+        } catch {
+          parsed = { raw: currentToolArgs };
+        }
+        events.push({
+          type: "toolcall_end",
+          toolName: currentToolName,
+          toolId: currentToolId,
+          parsedArgs: parsed,
+        });
+        currentMode = "text";
+        currentToolArgs = "";
+      }
+      tagBuffer = tagBuffer.slice(first.idx + first.len);
+      checkTags();
+    } else {
+      const lastAngle = tagBuffer.lastIndexOf("<");
+      if (lastAngle === -1) {
+        flush(currentMode, tagBuffer);
+        tagBuffer = "";
+      } else if (lastAngle > 0) {
+        flush(currentMode, tagBuffer.slice(0, lastAngle));
+        tagBuffer = tagBuffer.slice(lastAngle);
+      }
+    }
+  };
+
+  tagBuffer = input;
+  checkTags();
+  // Flush remainder
+  if (tagBuffer) {
+    flush(currentMode, tagBuffer);
+  }
+
+  return events;
+}
+
+describe("XML tag parser – tool_call extraction", () => {
+  it("extracts a single tool_call with id and name", () => {
+    const input =
+      'I will edit the file now.\n<tool_call id="abc12345" name="edit">{"file":"test.ts","content":"hello"}</tool_call>\nDone.';
+    const events = parseTagsFromText(input);
+
+    const starts = events.filter((e) => e.type === "toolcall_start");
+    expect(starts).toHaveLength(1);
+    expect(starts[0].toolName).toBe("edit");
+    expect(starts[0].toolId).toBe("abc12345");
+
+    const ends = events.filter((e) => e.type === "toolcall_end");
+    expect(ends).toHaveLength(1);
+    expect(ends[0].parsedArgs).toEqual({ file: "test.ts", content: "hello" });
+
+    // Text before and after the tag
+    const texts = events.filter((e) => e.type === "text").map((e) => e.content);
+    expect(texts.some((t) => t?.includes("I will edit"))).toBe(true);
+    expect(texts.some((t) => t?.includes("Done."))).toBe(true);
+  });
+
+  it("extracts multiple tool_call tags in sequence", () => {
+    const input =
+      '<tool_call id="t1" name="read">{"path":"a.ts"}</tool_call>' +
+      '<tool_call id="t2" name="write">{"path":"b.ts","data":"x"}</tool_call>';
+    const events = parseTagsFromText(input);
+
+    const starts = events.filter((e) => e.type === "toolcall_start");
+    expect(starts).toHaveLength(2);
+    expect(starts[0].toolName).toBe("read");
+    expect(starts[1].toolName).toBe("write");
+
+    const ends = events.filter((e) => e.type === "toolcall_end");
+    expect(ends).toHaveLength(2);
+    expect(ends[0].parsedArgs).toEqual({ path: "a.ts" });
+    expect(ends[1].parsedArgs).toEqual({ path: "b.ts", data: "x" });
+  });
+
+  it("handles tool_call with malformed JSON arguments gracefully", () => {
+    const input = '<tool_call id="bad1" name="exec">not valid json</tool_call>';
+    const events = parseTagsFromText(input);
+
+    const ends = events.filter((e) => e.type === "toolcall_end");
+    expect(ends).toHaveLength(1);
+    expect(ends[0].parsedArgs).toEqual({ raw: "not valid json" });
+  });
+
+  it("handles think tags around tool calls", () => {
+    const input =
+      "<think>Let me edit this file</think>" +
+      '<tool_call id="x1" name="edit">{"file":"foo.ts"}</tool_call>';
+    const events = parseTagsFromText(input);
+
+    const thinkEvents = events.filter((e) => e.type === "thinking");
+    expect(thinkEvents.length).toBeGreaterThanOrEqual(1);
+    expect(thinkEvents.map((e) => e.content).join("")).toBe("Let me edit this file");
+
+    const starts = events.filter((e) => e.type === "toolcall_start");
+    expect(starts).toHaveLength(1);
+    expect(starts[0].toolName).toBe("edit");
+  });
+
+  it("returns only text events when no tags are present", () => {
+    const input = "Just a plain response with no tool calls.";
+    const events = parseTagsFromText(input);
+
+    expect(events.every((e) => e.type === "text")).toBe(true);
+    expect(events.map((e) => e.content).join("")).toBe(input);
+  });
+});

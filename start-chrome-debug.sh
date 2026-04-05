@@ -188,13 +188,14 @@ if curl -s http://127.0.0.1:9222/json/version > /dev/null 2>&1; then
     "https://chatglm.cn"
     "https://chat.z.ai/"
     "https://manus.im/app"
+    "https://chat.ai.jh.edu"
   )
   for url in "${WEB_URLS[@]}"; do
     "$CHROME_PATH" --remote-debugging-port=9222 --user-data-dir="$USER_DATA_DIR" "$url" > /dev/null 2>&1 &
     sleep 0.5
   done
 
-  echo "✓ 已打开: Claude, ChatGPT, Doubao, Qwen, Kimi, Gemini, Grok, GLM（DeepSeek 在第 5 步单独登录）"
+  echo "✓ 已打开: Claude, ChatGPT, Doubao, Qwen, Kimi, Gemini, Grok, GLM, JH Web（DeepSeek 在第 5 步单独登录）"
   echo ""
   echo "=========================================="
   echo "下一步操作："

@@ -246,6 +246,18 @@ const Z_WEB_DEFAULT_COST = {
 
 export const GLM_INTL_WEB_BASE_URL = "https://chat.z.ai";
 export const GLM_INTL_WEB_DEFAULT_MODEL_ID = "glm-4-plus";
+
+export const JH_WEB_BASE_URL = "https://chat.ai.jh.edu";
+export const JH_WEB_DEFAULT_MODEL_ID = "claude-opus-4.5";
+const JH_WEB_DEFAULT_CONTEXT_WINDOW = 200000;
+const JH_WEB_DEFAULT_MAX_TOKENS = 8192;
+const JH_WEB_DEFAULT_COST = {
+  input: 0,
+  output: 0,
+  cacheRead: 0,
+  cacheWrite: 0,
+};
+
 const GLM_INTL_WEB_DEFAULT_CONTEXT_WINDOW = 128000;
 const GLM_INTL_WEB_DEFAULT_MAX_TOKENS = 4096;
 const GLM_INTL_WEB_DEFAULT_COST = {
@@ -483,7 +495,8 @@ export function normalizeProviders(params: {
     let normalizedProvider = provider;
 
     // Fix common misconfig: apiKey set to "${ENV_VAR}" instead of "ENV_VAR".
-    const apiKeyStr = typeof normalizedProvider.apiKey === "string" ? normalizedProvider.apiKey : undefined;
+    const apiKeyStr =
+      typeof normalizedProvider.apiKey === "string" ? normalizedProvider.apiKey : undefined;
     if (apiKeyStr && normalizeApiKeyConfig(apiKeyStr) !== apiKeyStr) {
       mutated = true;
       normalizedProvider = {
@@ -538,9 +551,7 @@ export function normalizeProviders(params: {
       const seen = new Set(
         (existing.models as Array<{ id?: string }>).map((m) => m.id).filter(Boolean),
       );
-      const extra = normalizedProvider.models.filter(
-        (m) => m.id && !seen.has(m.id),
-      );
+      const extra = normalizedProvider.models.filter((m) => m.id && !seen.has(m.id));
       if (extra.length > 0) {
         mutated = true;
         next[outputKey] = {
@@ -778,7 +789,7 @@ export async function discoverDeepseekWebModels(params?: {
       const auth = JSON.parse(params.apiKey);
       const { DeepSeekWebClient } = await import("../providers/deepseek-web-client.js");
       const client = new DeepSeekWebClient(auth);
-      return (await client.discoverModels()) as ModelDefinitionConfig[];
+      return await client.discoverModels();
     } catch (e) {
       console.warn("[DeepSeekWeb] Dynamic discovery failed, falling back to built-in list:", e);
     }
@@ -843,7 +854,7 @@ export async function discoverDoubaoWebModels(params?: {
       const auth = JSON.parse(params.apiKey);
       const { DoubaoWebClient } = await import("../providers/doubao-web-client.js");
       const client = new DoubaoWebClient(auth);
-      return (await client.discoverModels()) as ModelDefinitionConfig[];
+      return await client.discoverModels();
     } catch (e) {
       console.warn("[DoubaoWeb] Dynamic discovery failed, falling back to built-in list:", e);
     }
@@ -890,7 +901,7 @@ export async function discoverClaudeWebModels(params?: {
       const auth = JSON.parse(params.apiKey);
       const { ClaudeWebClientBrowser } = await import("../providers/claude-web-client-browser.js");
       const client = new ClaudeWebClientBrowser(auth);
-      const models = (await client.discoverModels()) as ModelDefinitionConfig[];
+      const models = await client.discoverModels();
       await client.close();
       return models;
     } catch (e) {
@@ -978,9 +989,7 @@ export async function buildChatGPTWebProvider(params?: {
   };
 }
 
-export async function buildQwenWebProvider(params?: {
-  apiKey?: string;
-}): Promise<ProviderConfig> {
+export async function buildQwenWebProvider(params?: { apiKey?: string }): Promise<ProviderConfig> {
   return {
     baseUrl: QWEN_WEB_BASE_URL,
     api: "qwen-web",
@@ -1041,9 +1050,7 @@ export async function buildQwenCNWebProvider(params?: {
   };
 }
 
-export async function buildKimiWebProvider(params?: {
-  apiKey?: string;
-}): Promise<ProviderConfig> {
+export async function buildKimiWebProvider(params?: { apiKey?: string }): Promise<ProviderConfig> {
   return {
     baseUrl: KIMI_WEB_BASE_URL,
     api: "kimi-web",
@@ -1108,9 +1115,7 @@ export async function buildGeminiWebProvider(params?: {
   };
 }
 
-export async function buildGrokWebProvider(params?: {
-  apiKey?: string;
-}): Promise<ProviderConfig> {
+export async function buildGrokWebProvider(params?: { apiKey?: string }): Promise<ProviderConfig> {
   return {
     baseUrl: GROK_WEB_BASE_URL,
     api: "grok-web",
@@ -1137,9 +1142,7 @@ export async function buildGrokWebProvider(params?: {
   };
 }
 
-export async function buildZWebProvider(params?: {
-  apiKey?: string;
-}): Promise<ProviderConfig> {
+export async function buildZWebProvider(params?: { apiKey?: string }): Promise<ProviderConfig> {
   return {
     baseUrl: Z_WEB_BASE_URL,
     api: "glm-web",
@@ -1190,6 +1193,45 @@ export async function buildGlmIntlWebProvider(params?: {
         cost: GLM_INTL_WEB_DEFAULT_COST,
         contextWindow: GLM_INTL_WEB_DEFAULT_CONTEXT_WINDOW,
         maxTokens: GLM_INTL_WEB_DEFAULT_MAX_TOKENS,
+      },
+    ],
+  };
+}
+
+export async function buildJhWebProvider(params?: { apiKey?: string }): Promise<ProviderConfig> {
+  if (params?.apiKey) {
+    try {
+      const auth = JSON.parse(params.apiKey);
+      const { JhWebClientBrowser } = await import("../providers/jh-web-client-browser.js");
+      const client = new JhWebClientBrowser(auth);
+      // JhWebClientBrowser does not expose discoverModels yet – fall through to static list.
+      await client.close();
+    } catch {
+      // ignore – use built-in list
+    }
+  }
+
+  return {
+    baseUrl: JH_WEB_BASE_URL,
+    api: "jh-web",
+    models: [
+      {
+        id: "claude-opus-4.5",
+        name: "Claude Opus 4.5 (JH Web)",
+        reasoning: false,
+        input: ["text"],
+        cost: JH_WEB_DEFAULT_COST,
+        contextWindow: JH_WEB_DEFAULT_CONTEXT_WINDOW,
+        maxTokens: JH_WEB_DEFAULT_MAX_TOKENS,
+      },
+      {
+        id: "claude-sonnet-4.5",
+        name: "Claude Sonnet 4.5 (JH Web)",
+        reasoning: false,
+        input: ["text"],
+        cost: JH_WEB_DEFAULT_COST,
+        contextWindow: JH_WEB_DEFAULT_CONTEXT_WINDOW,
+        maxTokens: JH_WEB_DEFAULT_MAX_TOKENS,
       },
     ],
   };
@@ -1573,6 +1615,15 @@ export async function resolveImplicitProviders(params: {
       apiKey: glmIntlWebKey,
     };
   }
+
+  const jhWebKey =
+    resolveEnvApiKeyVarName("jh-web") ??
+    resolveApiKeyFromProfiles({ provider: "jh-web", store: authStore });
+
+  providers["jh-web"] = {
+    ...(await buildJhWebProvider({ apiKey: jhWebKey })),
+    apiKey: jhWebKey,
+  };
 
   const manusApiKey =
     resolveEnvApiKeyVarName("manus-api") ??

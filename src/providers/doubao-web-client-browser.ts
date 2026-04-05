@@ -1,7 +1,6 @@
 import crypto from "node:crypto";
 import { chromium } from "playwright-core";
 import type { BrowserContext, Page } from "playwright-core";
-import type { ModelDefinitionConfig } from "../config/types.models.js";
 import { getHeadersWithAuth } from "../browser/cdp.helpers.js";
 import {
   launchOpenClawChrome,
@@ -11,6 +10,7 @@ import {
 } from "../browser/chrome.js";
 import { resolveBrowserConfig, resolveProfile } from "../browser/config.js";
 import { loadConfig } from "../config/io.js";
+import type { ModelDefinitionConfig } from "../config/types.models.js";
 
 export interface DoubaoWebClientOptions {
   sessionid: string;
@@ -32,7 +32,7 @@ export class DoubaoWebClientBrowser {
   private browser: BrowserContext | null = null;
   private page: Page | null = null;
   private running: RunningChrome | null = null;
-  private conversationId: string | null = null;  // 复用对话 ID
+  private conversationId: string | null = null; // 复用对话 ID
 
   constructor(options: DoubaoWebClientOptions | string) {
     if (typeof options === "string") {
@@ -81,7 +81,7 @@ export class DoubaoWebClientBrowser {
     // If attachOnly is true, connect to existing Chrome instead of launching
     if (browserConfig.attachOnly) {
       console.log(`[Doubao Web Browser] Connecting to existing Chrome at ${profile.cdpUrl}`);
-      
+
       let wsUrl: string | null = null;
       for (let i = 0; i < 10; i++) {
         wsUrl = await getChromeWebSocketUrl(profile.cdpUrl, 2000);
@@ -94,27 +94,29 @@ export class DoubaoWebClientBrowser {
       if (!wsUrl) {
         throw new Error(
           `Failed to connect to Chrome at ${profile.cdpUrl}. ` +
-          `Make sure Chrome is running in debug mode`
+            `Make sure Chrome is running in debug mode`,
         );
       }
 
-      this.browser = (await chromium.connectOverCDP(wsUrl, {
-        headers: getHeadersWithAuth(wsUrl),
-      })).contexts()[0]!;
+      this.browser = (
+        await chromium.connectOverCDP(wsUrl, {
+          headers: getHeadersWithAuth(wsUrl),
+        })
+      ).contexts()[0]!;
 
       // Find the Doubao page or create new one
-      const pages = this.browser!.pages();
-      let doubaoPage = pages.find(p => p.url().includes('doubao.com'));
+      const pages = this.browser.pages();
+      let doubaoPage = pages.find((p) => p.url().includes("doubao.com"));
 
       if (doubaoPage) {
         console.log(`[Doubao Web Browser] Found existing Doubao page: ${doubaoPage.url()}`);
         this.page = doubaoPage;
       } else {
         console.log(`[Doubao Web Browser] No Doubao page found, creating new one...`);
-        this.page = await this.browser!.newPage();
-        await this.page.goto('https://www.doubao.com/chat/', { waitUntil: 'domcontentloaded' });
+        this.page = await this.browser.newPage();
+        await this.page.goto("https://www.doubao.com/chat/", { waitUntil: "domcontentloaded" });
       }
-      
+
       console.log(`[Doubao Web Browser] Connected to existing Chrome successfully`);
     } else {
       // Launch new Chrome
@@ -135,11 +137,13 @@ export class DoubaoWebClientBrowser {
         throw new Error(`Failed to resolve Chrome WebSocket URL from ${cdpUrl}`);
       }
 
-      this.browser = (await chromium.connectOverCDP(wsUrl, {
-        headers: getHeadersWithAuth(wsUrl),
-      })).contexts()[0]!;
+      this.browser = (
+        await chromium.connectOverCDP(wsUrl, {
+          headers: getHeadersWithAuth(wsUrl),
+        })
+      ).contexts()[0]!;
 
-      this.page = this.browser!.pages()[0] || (await this.browser!.newPage());
+      this.page = this.browser.pages()[0] || (await this.browser.newPage());
     }
 
     // Set cookies
@@ -153,7 +157,7 @@ export class DoubaoWebClientBrowser {
       };
     });
 
-    await this.browser!.addCookies(cookies);
+    await this.browser.addCookies(cookies);
 
     return { browser: this.browser, page: this.page };
   }
@@ -165,12 +169,14 @@ export class DoubaoWebClientBrowser {
 
   /** 将多轮消息合并为 samantha 接口需要的单条 content（纯文本） */
   private mergeMessagesForSamantha(messages: Array<{ role: string; content: string }>): string {
-    return messages
-      .map(m => {
-        const role = m.role === "user" ? "user" : m.role === "assistant" ? "assistant" : "system";
-        return `<|im_start|>${role}\n${m.content}\n`;
-      })
-      .join("") + "<|im_end|>\n";
+    return (
+      messages
+        .map((m) => {
+          const role = m.role === "user" ? "user" : m.role === "assistant" ? "assistant" : "system";
+          return `<|im_start|>${role}\n${m.content}\n`;
+        })
+        .join("") + "<|im_end|>\n"
+    );
   }
 
   async chatCompletions(params: {
@@ -200,14 +206,14 @@ export class DoubaoWebClientBrowser {
       completion_option: {
         is_regen: false,
         with_suggest: true,
-        need_create_conversation: !this.conversationId,  // 如果已有 conversation_id 则不复创建
+        need_create_conversation: !this.conversationId, // 如果已有 conversation_id 则不复创建
         launch_stage: 1,
         is_replace: false,
         is_delete: false,
         message_from: 0,
         event_id: "0",
       },
-      conversation_id: this.conversationId || "0",  // 复用已有的 conversation_id
+      conversation_id: this.conversationId || "0", // 复用已有的 conversation_id
       local_conversation_id: `local_16${Date.now().toString().slice(-14)}`,
       local_message_id: crypto.randomUUID(),
     };
@@ -235,9 +241,9 @@ export class DoubaoWebClientBrowser {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Accept": "text/event-stream",
-            "Referer": "https://www.doubao.com/chat/",
-            "Origin": "https://www.doubao.com",
+            Accept: "text/event-stream",
+            Referer: "https://www.doubao.com/chat/",
+            Origin: "https://www.doubao.com",
             "Agw-js-conv": "str",
           },
           body: JSON.stringify(body),
@@ -259,7 +265,9 @@ export class DoubaoWebClientBrowser {
 
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
+          if (done) {
+            break;
+          }
           fullText += decoder.decode(value, { stream: true });
         }
 
@@ -268,31 +276,37 @@ export class DoubaoWebClientBrowser {
       { baseUrl: this.baseUrl, body: requestBody },
     );
 
-    console.log(`[Doubao Web Browser] Message response: ${responseData.ok ? 200 : responseData.status}`);
+    console.log(
+      `[Doubao Web Browser] Message response: ${responseData.ok ? 200 : responseData.status}`,
+    );
 
     if (!responseData.ok) {
-      console.error(`[Doubao Web Browser] Message failed: ${responseData.status} - ${responseData.error}`);
+      console.error(
+        `[Doubao Web Browser] Message failed: ${responseData.status} - ${responseData.error}`,
+      );
 
       if (responseData.status === 401) {
         throw new Error(
-          "Authentication failed. Please re-run onboarding to refresh your Doubao session."
+          "Authentication failed. Please re-run onboarding to refresh your Doubao session.",
         );
       }
       throw new Error(`Doubao API error: ${responseData.status}`);
     }
 
-    console.log(`[Doubao Web Browser] Response data length: ${responseData.data?.length || 0} bytes`);
+    console.log(
+      `[Doubao Web Browser] Response data length: ${responseData.data?.length || 0} bytes`,
+    );
     console.log(`[Doubao Web Browser] Response data preview: ${responseData.data?.slice(0, 500)}`);
 
     // 从响应中提取 conversation_id
     if (!this.conversationId && responseData.data) {
       try {
         // 查找 data 中的 conversation_id（可能在各个事件的 event_data 中）
-        const lines = responseData.data.split('\n');
+        const lines = responseData.data.split("\n");
         for (const line of lines) {
-          if (line.startsWith('data:') && line.includes('conversation_id')) {
+          if (line.startsWith("data:") && line.includes("conversation_id")) {
             const match = line.match(/"conversation_id"\s*:\s*"([^"]+)"/);
-            if (match && match[1] && match[1] !== '0') {
+            if (match && match[1] && match[1] !== "0") {
               this.conversationId = match[1];
               console.log(`[Doubao Web Browser] Captured conversation_id: ${this.conversationId}`);
               break;
@@ -300,7 +314,7 @@ export class DoubaoWebClientBrowser {
           }
         }
       } catch (e) {
-        console.log(`[Doubao Web Browser] Could not extract conversation_id: ${e}`);
+        console.log(`[Doubao Web Browser] Could not extract conversation_id: ${String(e)}`);
       }
     }
 

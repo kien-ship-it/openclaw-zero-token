@@ -136,7 +136,7 @@ export function createGlmIntlWebStreamFn(cookieOrJson: string): StreamFn {
               } else if (Array.isArray(lastUserMessage.content)) {
                 prompt = lastUserMessage.content
                   .filter((part) => part.type === "text")
-                  .map((part) => (part as TextContent).text)
+                  .map((part) => part.text)
                   .join("");
               }
             }
@@ -461,7 +461,9 @@ export function createGlmIntlWebStreamFn(cookieOrJson: string): StreamFn {
                       }
                     }
                   }
-                  if (delta) break;
+                  if (delta) {
+                    break;
+                  }
                 }
               }
             }
@@ -504,7 +506,9 @@ export function createGlmIntlWebStreamFn(cookieOrJson: string): StreamFn {
           emitDelta(mode, tagBuffer);
         }
 
-        console.log(`[GlmIntlWebStream] Stream completed. Parts: ${contentParts.length}, Tools: ${accumulatedToolCalls.length}`);
+        console.log(
+          `[GlmIntlWebStream] Stream completed. Parts: ${contentParts.length}, Tools: ${accumulatedToolCalls.length}`,
+        );
 
         stream.push({
           type: "done",
@@ -534,7 +538,7 @@ export function createGlmIntlWebStreamFn(cookieOrJson: string): StreamFn {
             },
             timestamp: Date.now(),
           },
-        } as any);
+        } as unknown);
       } finally {
         stream.end();
       }

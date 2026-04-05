@@ -503,3 +503,38 @@ export async function setKilocodeApiKey(
     agentDir: resolveAuthAgentDir(agentDir),
   });
 }
+
+export async function setJhWebCredentials(
+  auth: { bearerToken: string; cookie: string; userAgent: string },
+  agentDir?: string,
+) {
+  upsertAuthProfile({
+    profileId: "jh-web:default",
+    credential: buildApiKeyCredential("jh-web", JSON.stringify(auth)),
+    agentDir: resolveAuthAgentDir(agentDir),
+  });
+}
+
+export async function getJhWebCredentials(
+  agentDir?: string,
+): Promise<{ bearerToken: string; cookie: string; userAgent: string } | null> {
+  const resolvedDir = resolveAuthAgentDir(agentDir);
+  const profilePath = path.join(resolvedDir, "auth-profiles.json");
+  try {
+    const raw = fs.readFileSync(profilePath, "utf-8");
+    const store = JSON.parse(raw) as {
+      profiles?: Record<string, { type?: string; key?: string; token?: string }>;
+    };
+    const profile = store.profiles?.["jh-web:default"];
+    if (!profile) {
+      return null;
+    }
+    const raw_value = profile.key ?? profile.token ?? "";
+    if (!raw_value) {
+      return null;
+    }
+    return JSON.parse(raw_value) as { bearerToken: string; cookie: string; userAgent: string };
+  } catch {
+    return null;
+  }
+}

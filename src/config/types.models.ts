@@ -21,6 +21,7 @@ export const MODEL_APIS = [
   "qwen-web",
   "qwen-cn-web",
   "doubao-web",
+  "jh-web",
   "manus-api",
 ] as const;
 

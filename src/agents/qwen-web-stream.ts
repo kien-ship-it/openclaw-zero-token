@@ -146,7 +146,7 @@ export function createQwenWebStreamFn(cookieOrJson: string): StreamFn {
               } else if (Array.isArray(lastUserMessage.content)) {
                 prompt = lastUserMessage.content
                   .filter((part) => part.type === "text")
-                  .map((part) => (part as TextContent).text)
+                  .map((part) => part.text)
                   .join("");
               }
             }
@@ -443,10 +443,7 @@ export function createQwenWebStreamFn(cookieOrJson: string): StreamFn {
 
             // Extract content delta - Qwen v2 uses choices[0].delta.content
             const delta =
-              data.choices?.[0]?.delta?.content ??
-              data.text ??
-              data.content ??
-              data.delta;
+              data.choices?.[0]?.delta?.content ?? data.text ?? data.content ?? data.delta;
             if (typeof delta === "string" && delta) {
               pushDelta(delta);
             }
@@ -485,7 +482,9 @@ export function createQwenWebStreamFn(cookieOrJson: string): StreamFn {
           emitDelta(mode, tagBuffer);
         }
 
-        console.log(`[QwenWebStream] Stream completed. Parts: ${contentParts.length}, Tools: ${accumulatedToolCalls.length}`);
+        console.log(
+          `[QwenWebStream] Stream completed. Parts: ${contentParts.length}, Tools: ${accumulatedToolCalls.length}`,
+        );
 
         stream.push({
           type: "done",
@@ -515,7 +514,7 @@ export function createQwenWebStreamFn(cookieOrJson: string): StreamFn {
             },
             timestamp: Date.now(),
           },
-        } as any);
+        } as unknown);
       } finally {
         stream.end();
       }

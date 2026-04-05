@@ -84,7 +84,8 @@ export async function applyAuthChoiceChatGPTWeb(
       const authData = JSON.stringify({
         accessToken,
         cookie: `__Secure-next-auth.session-token=${accessToken}`,
-        userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        userAgent:
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       });
       await setChatGPTWebCookie({ cookie: authData }, agentDir);
     }
@@ -92,6 +93,6 @@ export async function applyAuthChoiceChatGPTWeb(
     await setChatGPTWebCookie({ cookie: accessToken }, agentDir);
   }
 
-  const nextConfig = await applyChatGPTWebConfig(config);
+  const nextConfig = applyChatGPTWebConfig(config);
   return { config: nextConfig };
 }

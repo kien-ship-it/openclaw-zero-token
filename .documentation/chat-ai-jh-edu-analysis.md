@@ -20,12 +20,12 @@ POST /api/agents/chat/AnthropicClaude HTTP/1.1
 Accept: */*
 Accept-Encoding: gzip, deflate, br, zstd
 Accept-Language: en-US,en;q=0.9
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IlFaZ045SHFOa0dORU00R2VLY3pEMDJQY1Z2NCIsImtpZCI6IlFaZ045SHFOa0dORU00R2VLY3pEMDJQY1Z2NCJ9.eyJhdWQiOiJhcGk6Ly9jaGF0LmFpLmpoLmVkdSIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzlmYTRmNDM4LWIxZTYtNDczYi04MDNmLTg2ZjhhZWRmMGRlYy8iLCJpYXQiOjE3NzM0MjIzNjgsIm5iZiI6MTc3MzQyMjM2OCwiZXhwIjoxNzczNDI2MzU2LCJhY3IiOiIxIiwiYWlvIjoiQVhRQWkvOGJBQUFBMjNwU2NZRFplSXhLeTdHa2tlRHI1N0pybE4yWnFyTGtsYSs0TFd6UEI4Kzc2R1QzalA4QjBYMmd5U1UrZklIMVhNcVYzbzIzek5CS2s2YkJKMnFUV0k4cmZpMVcvVko2V0hreGVNUlpIQ2UrVURXamlmdWZSMkl3TG9DbXF1Z2hjL080V1FYcG8wL2FMTkxEYW90WHJBPT0iLCJhbXIiOlsicHdkIl0sImFwcGlkIjoiYTVlZDg1ZjctYmNjMC00YjNiLWE5YzYtOTVhMWUzZmI2Njg1IiwiYXBwaWRhY3IiOiIxIiwiZmFtaWx5X25hbWUiOiJMZSIsImdpdmVuX25hbWUiOiJLaWVuIiwiaXBhZGRyIjoiMTI4LjIyMC4xNTkuMjEwIiwibmFtZSI6IktpZW4gTGUiLCJvaWQiOiJmZjhiODliYy0xNmMwLTRlYzAtYjAyYS1kNjNiNzQxMGJjZGMiLCJvbnByZW1fc2lkIjoiUy0xLTUtMjEtMTIxNDQ0MDMzOS00ODQ3NjM4NjktNzI1MzQ1NTQzLTU5NTc5OTQiLCJyaCI6IjEuQVFnQU9QU2tuLWF4TzBlQVA0YjRydDhON1BlRjdhWEF2RHRMcWNhVm9lUDdab1VJQUFrSUFBLiIsInNjcCI6ImFjY2Vzc191c2VyIiwic2lkIjoiMDAyZjA3MmEtOTM5OC03ZWNkLTgxNWQtMjY2NThjMjllOWVkIiwic3ViIjoiLXlkbUZhQ3FlLTl0eFRTbVZyNzZQQmNvMUR4MS1GbHhONHpNR181b1A2ayIsInRpZCI6IjlmYTRmNDM4LWIxZTYtNDczYi04MDNmLTg2ZjhhZWRmMGRlYyIsInVuaXF1ZV9uYW1lIjoiZGxlMjZAamguZWR1IiwidXBuIjoiZGxlMjZAamguZWR1IiwidXRpIjoicXd4SHlLLW1fRXl6S3JoQjcxRXpBQSIsInZlciI6IjEuMCIsInhtc19mdGQiOiJLeV9tOFVzRy1LcGZFQXZhX0FycXVoOThlbXppV3JSajNtbmdZNGxZQjRnQmRYTjNaWE4wTXkxa2MyMXoifQ.THJTidF47f11wybInDxtQiC89EfIwfni7gTxfTuYGCsCHus1FHIWTdfX8f7IosB0Tl8NfB87vBGezsvnpwBbigIUUSYtCh0lMk6tU3R1T2jOxF96MzYavLnSgaSUB5uK8kdG-mdYIO0GK2b7MUkl2xpDCasdfY2Vri8v78qkTIjgJlEhQDK6QZzV5z_VBf7mHS5MamdxNSF6Ktg3rhUgm3FvxFznskWYZzs_6Zi2bGt-kTrjnuKO2_zPBLarAh0QW7PxyXoIAu4L73GkQKofFQ0zTx2UtW-ir_lmN5gotA839VvoaLHFNz8Qx6ri1l0LPj0LVTZn9kF-KnRfXA-xBA
+Authorization: Bearer <REDACTED_JWT_TOKEN>
 Cache-Control: no-cache
 Connection: keep-alive
 Content-Length: 973
 Content-Type: application/json
-Cookie: cf_clearance=4aPM8CS1T.D7pwq4OUXNy3ZtAv74CUiXNwE2b2dAUzs-1769123513-1.2.1.1-LED9vBJvrfP3lrL6.8aoeinyrlYMmJTDrlpNcBSCtWo1nnzJuumBPL1HEUMDiK0QWaxxvORUhv12P_XyqjFHwFlnzb6lHSsn6OzhNALGZsAwRJM0m8fwg04DT4VXcGnSNQEiBTXYhSu__DF1NXYCrRWQv6xlQ7oUzozyKvTt.Gtrc.EyW_wgk82X_2oAZahfJsksQ610wav9ctXqTyEquaGyZNXhT1cvOWkcxn0DKc8; connect.sid=s%3A6nzpnNcISSJFEdiHZo5BkH6KjEldNEUa.JiqEGYYfA6agrdPnxQeInLSF7fVLvkTvVqbvTPqH9TQ; token_provider=openid; refreshToken=1.AQgAOPSkn-axO0eAP4b4rt8N7PeF7aXAvDtLqcaVoeP7ZoUIAAkIAA.BQABAwEAAAADAOz_BQD0_0V2b1N0c0FydGlmYWN0cwIAAAAAAJJzAx0cjX90f5YEATvzXg0E_FsbnlLB-70gIcmQYN8qsYhpqh_Tfm54GKG-Sz5-isZv-KcciPBbyuyxOW_za_pZXsiP91XQkvzBGrmUcl7QORGdYM-78gxZmpJMMZ2C5vfqj8s4Se3BsvDDONuJCvyWHgF4sNyVfcHJwS-2RTSOKYMMrhRP_xGUyocKPYQXWqdue89NGLYXV1PkP8NcNxaa84DBRaIjU119slFlSkvB9LDX19BOTo2ouAab5cb0Zg6Os2UacAh_uLoESmBvFm1P7ItnxMOXbSEIUbkzowWEqSM-1-8uy9ns3SWJchL5xqeoteOr2zIiIZDerUna6ADX8t2OHd3yjkN0hXeD2yXOOlgxytN3Mqff9KC2Uov4eWdfLoxOrPRYdfk4_k8pUUjDoHviHQIA4uatEFvFHVifUc7ZlyLX-Iz2IKl94IlT2G5isvJUWgIVU_gD58mAxJvEsYZ5GVaW7UTSTSFFo7T6S74WtR8Vs0y3M7zOfSi_YGcvCSUzsWtZb4ZpVeyS87sZlVFCAIbN5nRzV2hACUpE8a-uT3VbEwAoBkqa64SPzPJ3tEGqbExRAh2Ksrp6mZ5CAmeokFnhIpGeoxdVbZct7IRqiv7PFn1TaH6b5kHPhWPSDawMGCHQCemYoUo_IttAv4jfvy3qX3rJuzlMDaRZpmQ9VVuIOWRpLOyGMmJsHqcIXTRDLsdPdJoOcVEwpIB7khlpJ32xi1JJ3UUUiCxP0MjYmb11Q3B3TDo0bCa56fXnagdKJaEbWPT1cqM40Q4DaEPpS9jzFRozIL_jNUqFdtCIBxLFqzNcK-QKbvxvRqf7yXlagGoQU1_a4PT3bCzalBk1BcXBjSL7wVmKw6gwd7wfUQJsMMUEYDf6Tp2j8ji1opbaBps_F4jhNHo70fbP4qTeXtOkIfOkcB3Kh7JrBNlNJUGo9uM-WjgLkO-1jPgtkUv2rFc7WoIMOxvfVxSdDjvd4v2zuQmYK4SNMC8cGJDB4w8MrKaOv8VpUAhP0PIEQ5CJV2wO8yO5zQQNOTOCNSRK6sehKYm0M_1gGX-u7gCurqNrGLPYk8aDBt-3czWGfoetyB38R05FEK5w19eJsNIJRbRO_kYJgq-osKb0UGPCwu0PoZR3mZDlxqWIW1MLHqkGfZ8k0wJsbUiIddDTNSs51OwWWGe6TPKzojtWCrt1dFmhe0YWukKJYNf7E-K3B2i8t-pa47JFWgyDxSSsWYj5Ga-yjNqzkpXKbQmZNmxbKGHAFffTtWdKHqGupowasUInmJlDRFRFDURpMI-lUO013rl_-8Y; openid_user_id=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjJjMDZjNzhmNzMwOTAyOTY1MmY1ZiIsImlhdCI6MTc3MzQyMjY2OSwiZXhwIjoxNzc0MDI3NDY5fQ.BdwZTXSw7WuSEgcCdIBUjw3pYSF97LlBGShFEirxcFQ
+Cookie: cf_clearance=<REDACTED>; connect.sid=<REDACTED>; token_provider=openid; refreshToken=<REDACTED>; openid_user_id=<REDACTED>
 Host: chat.ai.jh.edu
 Origin: https://chat.ai.jh.edu
 Pragma: no-cache
@@ -81,26 +81,215 @@ The API does not follow the standard OpenAI format (`messages` array) and instea
 - **Implications for API Client:** The `src/providers/jh-web-client.ts` client must format standard OpenClaw messages into this structure. Specifically, it will need to:
   - Generate random UUIDs for `parentMessageId`, `conversationId`, and `messageId` using `crypto.randomUUID()`.
   - Inject the correct timestamp (`clientTimestamp`).
-  - Flatten the conversation history into a single string for the `text` field, or implement logic to handle stateful conversation IDs if multi-turn context must be managed on the server side.
+  - Flatten the conversation history into a single string for the `text` field, or implement logic to handle stateful conversation IDs if multi-turn context must be managed on the server side - context will be handled client-side.
 
 ## Phase 3: Streaming Category
 
-**Category:** Server-Sent Events (SSE) / Custom JSON
+**Category:** Server-Sent Events (SSE) / Custom JSON (LibreChat-based)
 
-The platform streams responses back using a standard SSE mechanism but with a custom JSON structure for the events.
+The platform streams responses back using SSE with a **two-layer event structure**. All SSE lines use `event: message`, but the JSON payload contains its own `event` field that distinguishes the actual event type.
 
 - **Content-Type:** `text/event-stream`
-- **Event Types:** Look for `"event":"on_message_delta"`.
-- **Chunk Structure:** The actual text delta is nested within the JSON payload of the event:
+- **SSE line:** Always `event: message` (the SSE event name is constant).
+- **JSON event field:** The real event type is in the parsed JSON's `event` key.
 
-  ```json
-  {
-    "event": "on_message_delta",
-    "data": {
-      "id": "step_7Im-LFL9Dzm_fAPvXzcR5",
-      "delta": { "content": [{ "type": "text", "text": "Hello" }] }
-    }
-  }
-  ```
+### SSE Event Sequence (observed live)
 
-- **Implications for Stream Handler:** The `src/agents/jh-web-stream.ts` module must parse the SSE stream, filter for `on_message_delta` events, and extract the text from the path `chunk.data.delta.content[0].text`.
+1. **User echo** (first event) -- skip this:
+
+   ```
+   event: message
+   data: {"message":{"messageId":"...","sender":"User","text":"<full user prompt>","isCreatedByUser":true},"created":true}
+   ```
+
+2. **Run step** -- metadata, skip:
+
+   ```
+   event: message
+   data: {"event":"on_run_step","data":{"stepIndex":0,"id":"step_...","type":"message_creation",...}}
+   ```
+
+3. **Message deltas** (repeated, ~30 events) -- **extract text from these**:
+
+   ```
+   event: message
+   data: {"event":"on_message_delta","data":{"id":"step_...","delta":{"content":[{"type":"text","text":"Hello"}]}}}
+   ```
+
+4. **Final summary** (last event) -- carries `responseMessage` with full accumulated text + metadata:
+   ```
+   event: message
+   data: {"message":{...user echo...},"responseMessage":{"sender":"Claude","isCreatedByUser":false,"text":"","content":[{"type":"text","text":"<full response>"}]}}
+   ```
+
+### Parser Logic
+
+The `src/agents/jh-web-stream.ts` module must:
+
+1. Check the JSON `event` field **first** (not the SSE `event:` line, which is always `message`).
+2. For `event: "on_message_delta"`: extract text from `data.delta.content[].text`.
+3. For payloads with a `message` key: skip if `message.isCreatedByUser === true` or `message.sender === "User"`.
+4. Ignore `on_run_step` and other metadata events.
+
+---
+
+## Validation Notes
+
+Cross-referencing against existing web-provider patterns in the codebase (`claude-web-*`, `deepseek-web-*`, `chatgpt-web-*`, etc.).
+
+### Confirmed Correct
+
+- **File paths** align with conventions: auth in `src/providers/`, stream in `src/agents/`, client in `src/providers/`.
+- **"Attach to Existing Browser" auth approach** matches `claude-web-auth.ts` (Playwright CDP attach, intercept network).
+- **Proprietary payload** analysis is accurate; the flat JSON with UUIDs and `clientTimestamp` is non-OpenAI and requires a custom client.
+- **SSE with custom JSON** streaming category is correct; the `on_message_delta` event structure needs a dedicated parser.
+- **Client-side context flattening** decision (single `text` field) is the right call for simplicity.
+
+### Corrections (discovered during implementation)
+
+1. **SSE event line is always `message`**, not `on_message_delta`. The original analysis assumed the SSE `event:` line would carry the event type, but all events use `event: message`. The real event type is in the JSON payload's `event` field.
+2. **First SSE event is a user echo.** The server echoes back the user's own message (with `isCreatedByUser: true`, `sender: "User"`) before sending the AI response. The parser must skip this.
+3. **Response is buffered, not truly streaming from the browser.** Because the API client runs inside `page.evaluate()` (Playwright browser context), the full SSE response is collected in-browser and returned as a single string. The stream handler still parses it line-by-line on the Node side.
+4. **Model resolution requires explicit provider config in `openclaw.json`.** The `PiModelRegistry` (pi-coding-agent) does not recognize custom web providers. The fallback path in `resolveModelWithRegistry` checks `cfg.models.providers["jh-web"]`, so the provider must be registered in `openclaw.json` (not just `models.json`).
+
+### Gaps and Additions
+
+1. **Browser client variant missing.** ✅ Implemented as `src/providers/jh-web-client-browser.ts` -- the primary client, since `cf_clearance` cookies are tied to TLS fingerprints that plain `fetch` cannot reproduce.
+
+2. **Auth-choice registration not mentioned.** ✅ Wired into:
+   - `src/commands/auth-choice.apply.jh-web.ts`
+   - `src/commands/onboard-auth.config-core.ts` (config applier)
+   - `src/commands/onboard-auth.credentials.ts` (credential storage)
+   - `src/commands/onboard-web-auth.ts` (model aliases + provider model IDs)
+
+3. **Token refresh strategy.** ✅ Implemented option **(a)**: auto re-auth via browser on 401. The client detects expired tokens, triggers `loginJhWeb` to re-capture credentials from the live browser session, then retries the request once.
+
+4. **Model registration.** ✅ Registered in:
+   - `src/agents/models-config.providers.ts` (`buildJhWebProvider()` + `resolveAllProviders` registration)
+   - `.openclaw-upstream-state/openclaw.json` (`models.providers.jh-web` with model definitions)
+
+5. **Security: redact sample credentials.** ✅ All live JWTs, cookies, and PII replaced with `<REDACTED>` placeholders.
+
+---
+
+## Implementation Plan
+
+### Phase 0: Scaffold and Security Hygiene (DONE)
+
+**Goal:** Set up file scaffolds and redact sensitive data.
+
+| Step | Action                                                                                                                               | File(s)                                                                                                                                             | Status |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| 0.1  | Redact all live tokens, cookies, JWTs, and PII from this document. Replace with `<REDACTED>` placeholders keeping structure visible. | `.documentation/chat-ai-jh-edu-analysis.md`                                                                                                         | ✅     |
+| 0.2  | Create empty scaffold files for the provider integration.                                                                            | `src/providers/jh-web-auth.ts`, `src/providers/jh-web-client-browser.ts`, `src/agents/jh-web-stream.ts`, `src/commands/auth-choice.apply.jh-web.ts` | ✅     |
+| 0.3  | Add `JH_WEB_BEARER_TOKEN` and `JH_WEB_COOKIE` to `.env.example` with placeholder descriptions.                                       | `.env.example`                                                                                                                                      | ✅     |
+
+**Checkpoint 0:** All scaffold files exist, no secrets in docs, `.env.example` updated. `pnpm build` still passes (empty files export nothing yet).
+
+---
+
+### Phase 1: Auth Module
+
+**Goal:** Capture Bearer token + cookies from a live browser session via Playwright CDP.
+
+| Step | Action                                                                                                                                                                                                                              | File(s)                                    | Status |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | ------ |
+| 1.1  | Define `JhWebAuth` interface: `{ bearerToken: string; cookie: string; userAgent: string; }`.                                                                                                                                        | `src/providers/jh-web-auth.ts`             | ✅     |
+| 1.2  | Implement `loginJhWeb(params)` following the `loginClaudeWeb` pattern: launch/attach Chrome, navigate to `https://chat.ai.jh.edu`, intercept `Authorization` header and `Cookie` header from any `POST /api/agents/chat/*` request. | `src/providers/jh-web-auth.ts`             | ✅     |
+| 1.3  | Add JWT expiry extraction helper: decode the Bearer JWT payload, read `exp`, and expose `getTokenExpiresAt(bearerToken): number`.                                                                                                   | `src/providers/jh-web-auth.ts`             | ✅     |
+| 1.4  | Wire credential storage: `setJhWebCredentials(auth, agentDir)` and `getJhWebCredentials(agentDir)`.                                                                                                                                 | `src/commands/onboard-auth.credentials.ts` | ✅     |
+| 1.5  | Write unit test for JWT expiry extraction (mock JWT, verify timestamp).                                                                                                                                                             | `src/providers/jh-web-auth.test.ts`        | ✅     |
+
+**Checkpoint 1:** `loginJhWeb` can be invoked manually (e.g., via a temp script), captures auth, stores credentials, and `pnpm test -- jh-web-auth` passes.
+
+---
+
+### Phase 2: API Client (Browser-based) (DONE)
+
+**Goal:** Send chat requests using the proprietary payload format through a Playwright-managed browser page, bypassing Cloudflare TLS fingerprint checks.
+
+| Step | Action                                                                                                                                                                             | File(s)                                       | Status |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------ |
+| 2.1  | Define `JhWebClientOptions`: `{ bearerToken, cookie, userAgent, model? }`.                                                                                                         | `src/providers/jh-web-client-browser.ts`      | ✅     |
+| 2.2  | Implement `JhWebClientBrowser` class with `init()` (CDP attach) and `chatCompletions(params)` method. Builds the flat proprietary JSON and POSTs to `/api/agents/chat/{endpoint}`. | `src/providers/jh-web-client-browser.ts`      | ✅     |
+| 2.3  | Handle conversation state: maintain `parentMessageId` chain across turns within a session using an in-memory `Map<sessionKey, { conversationId, lastParentMessageId }>`.           | `src/providers/jh-web-client-browser.ts`      | ✅     |
+| 2.4  | Add model-endpoint mapping: `{ "claude-opus-4.5": "AnthropicClaude", ... }` so the endpoint path is derived from the selected model.                                               | `src/providers/jh-web-client-browser.ts`      | ✅     |
+| 2.5  | Add token-expiry guard: before each request, check `getTokenExpiresAt()`. If within 5 min of expiry, log a warning. If expired, throw a descriptive error prompting re-auth.       | `src/providers/jh-web-client-browser.ts`      | ✅     |
+| 2.6  | Write unit test for payload construction (mock inputs, assert JSON shape matches spec).                                                                                            | `src/providers/jh-web-client-browser.test.ts` | ✅     |
+
+**Checkpoint 2:** `JhWebClientBrowser.sendMessage("hello")` returns a raw `ReadableStream` / `Response` from the server. Payload matches the spec from Phase 2 of the analysis. Unit tests pass.
+
+---
+
+### Phase 3: Stream Handler (DONE)
+
+**Goal:** Parse the SSE response into OpenClaw's `AssistantMessage` event stream.
+
+| Step | Action                                                                                                                                                                                                          | File(s)                            | Status |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | ------ |
+| 3.1  | Implement `createJhWebStreamFn(credentialJson: string): StreamFn` following the `createClaudeWebStreamFn` pattern.                                                                                              | `src/agents/jh-web-stream.ts`      | ✅     |
+| 3.2  | SSE parser: read the `text/event-stream` response line-by-line, parse JSON chunks, filter for `event === "on_message_delta"`.                                                                                   | `src/agents/jh-web-stream.ts`      | ✅     |
+| 3.3  | Delta extraction: extract text from `chunk.data.delta.content[0].text`, emit via `stream.emitContentDelta(text)`. Handle array content blocks (iterate all `content` items of `type === "text"`).               | `src/agents/jh-web-stream.ts`      | ✅     |
+| 3.4  | Stream lifecycle: emit `stream.emitMessageStart()` on first delta, emit `stream.emitMessageEnd(assistantMessage)` on stream close using `buildAssistantMessageWithZeroUsage()` from `stream-message-shared.ts`. | `src/agents/jh-web-stream.ts`      | ✅     |
+| 3.5  | Error handling: catch SSE parse errors and network errors, emit `buildStreamErrorAssistantMessage()` and close stream gracefully.                                                                               | `src/agents/jh-web-stream.ts`      | ✅     |
+| 3.6  | Write unit tests with mock SSE payloads: (a) single delta, (b) multi-chunk stream, (c) malformed JSON, (d) empty stream.                                                                                        | `src/agents/jh-web-stream.test.ts` | ✅     |
+
+**Checkpoint 3:** A mock SSE stream is correctly parsed into `AssistantMessage` events. `pnpm test -- jh-web-stream` passes. Manual end-to-end test: `loginJhWeb` → `sendMessage` → `createJhWebStreamFn` → streamed text output to console.
+
+---
+
+### Phase 4: Onboarding and Registration (DONE)
+
+**Goal:** Wire the provider into the CLI onboarding flow and model selection system.
+
+| Step | Action                                                                                                                                                                                            | File(s)                                                  | Status |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ------ |
+| 4.1  | Add `"jh-web"` auth choice to the auth-choice type enum and selection list.                                                                                                                       | `src/commands/auth-choice.ts`                            | ✅     |
+| 4.2  | Implement `applyAuthChoiceJhWeb(params)` following the `applyAuthChoiceClaudeWeb` pattern: prompt for auto/manual mode, call `loginJhWeb` or accept manual cookie+token paste, store credentials. | `src/commands/auth-choice.apply.jh-web.ts`               | ✅     |
+| 4.3  | Add `applyJhWebConfig(config)` config applier that sets `models.providers.jh-web` with `baseUrl: "https://chat.ai.jh.edu"` and default model.                                                     | `src/commands/onboard-auth.config-core.ts`               | ✅     |
+| 4.4  | Register `jh-web` as a provider in `models-config.providers.ts` via `buildJhWebProvider()` + `resolveAllProviders`. Also requires entry in `openclaw.json` `models.providers`.                    | `src/agents/models-config.providers.ts`, `openclaw.json` | ✅     |
+| 4.5  | Wire the stream function: `createJhWebStreamFn` is resolved when `provider === "jh-web"` in the embedded runner's stream dispatch.                                                                | `src/agents/pi-embedded-runner/run/attempt.ts`           | ✅     |
+| 4.6  | Add `JH_WEB_BEARER_TOKEN` to `PROVIDER_ENV_API_KEY_CANDIDATES` map for env-based auth fallback.                                                                                                   | `src/agents/model-auth-env-vars.ts`                      | ✅     |
+
+**Checkpoint 4:** `openclaw auth` shows "JH Web" as an option. Selecting it runs the browser login flow (or manual paste). After auth, `openclaw chat -m jh-web/claude-opus-4.5` sends a message and streams the response. `pnpm build` and `pnpm test` pass.
+
+---
+
+### Phase 5: Hardening and Polish
+
+**Goal:** Production-readiness, edge cases, and documentation.
+
+| Step | Action                                                                                                                                                                                 | File(s)                                  | Status |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ------ |
+| 5.1  | Token refresh: implement auto-re-auth by detecting 401 responses, triggering `loginJhWeb` re-capture, and retrying the request once.                                                   | `src/providers/jh-web-client-browser.ts` | ✅     |
+| 5.2  | Cloudflare challenge handling: detect `cf_clearance` expiry (403 with challenge page), log actionable error message.                                                                   | `src/providers/jh-web-client-browser.ts` | ✅     |
+| 5.3  | Multi-model support: test and add additional endpoint mappings beyond `AnthropicClaude` (e.g., if the platform offers GPT or other models under different `/api/agents/chat/*` paths). | `src/providers/jh-web-client-browser.ts` | ✅     |
+| 5.4  | Conversation management: add optional `conversationId` reuse for multi-turn context managed server-side (currently client-side flattening).                                            | `src/providers/jh-web-client-browser.ts` | ✅     |
+| 5.5  | Add integration/E2E test (gated behind `LIVE=1`).                                                                                                                                      | `src/agents/jh-web-stream.live.test.ts`  | ✅     |
+| 5.6  | Documentation: update `docs/` with JH Web provider setup instructions.                                                                                                                 | `docs/providers/jh-web.md`               | ✅     |
+
+**Checkpoint 5:** 401/403 errors are handled gracefully. Multiple models work. Live test passes with real credentials. Docs are published.
+
+---
+
+## Post-Implementation: Bugs Found and Fixed
+
+During integration testing, several issues were discovered and resolved:
+
+### Bug 1: Auth capture too restrictive
+
+**Symptom:** `loginJhWeb` hung waiting for credentials.
+**Root cause:** Request interception only captured credentials from `POST /api/agents/chat/*` requests, requiring the user to send a chat message. If the user was already logged in, no such request was made.
+**Fix:** Broadened interception to capture `Authorization: Bearer` headers from ANY request to `chat.ai.jh.edu`. Added cookie polling and existing-session detection with page reload to trigger authenticated API requests.
+
+### Bug 2: `model_not_found` at runtime
+
+**Symptom:** `Unknown model: jh-web/claude-opus-4.5 (model_not_found)` despite model appearing in `/model status`.
+**Root cause:** `PiModelRegistry` (from `@mariozechner/pi-coding-agent`) does not recognize custom web providers. The fallback path in `resolveModelWithRegistry` checks `cfg.models.providers["jh-web"]`, but `openclaw.json` had `"providers": {}`. The `models.json` file (used by `/model status`) had the provider, but the runtime model resolver needs it in the OpenClawConfig too.
+**Fix:** Added the `jh-web` provider definition (baseUrl, api, models) to `openclaw.json` under `models.providers`.
+
+### Bug 3: SSE parser returned user's own message
+
+**Symptom:** OpenClaw UI displayed the system prompt text instead of the AI response.
+**Root cause:** All SSE events use `event: message` as the SSE line. The parser checked `currentEventName === "message"` which matched ALL events, entering the Format A handler and returning early -- never reaching the `on_message_delta` handler. The first event (user echo) was parsed as the response.
+**Fix:** Rewrote the parser to check the JSON payload's `event` field first. `on_message_delta` events are now processed for their `data.delta.content[].text` deltas before the `message`-key handler runs. User echo events are skipped via `isCreatedByUser === true || sender === "User"`.
